@@ -21,6 +21,10 @@ import { AccountMenu } from "./pages/UserPage/AccountMenuLayout";
 import MyAccount from "./components/AccountMenu/MyAccount";
 import Success from "./pages/Authen/SuccesVerifyEmail";
 import GoogleCallback from "./pages/Authen/GoogleCallback";
+import MyBookings from "./components/AccountMenu/Mybooking";
+import MySettingNotification from "./components/AccountMenu/MySettingNotification";
+import MyCard from "./components/AccountMenu/MyCard";
+import MySaves from "./components/AccountMenu/MySaves";
 
 
 
@@ -39,9 +43,14 @@ import GoogleCallback from "./pages/Authen/GoogleCallback";
       <Route path="booking/confirmation" element={<Bookingsconfirmation />} />
       <Route path="booking/checkout" element={<BookingCheckout />} />
       <Route path="booking/sucesss" element={<BookingSuccess />} />
-
+   <Route path="travel/posts/:id" element={<Home />} />
       <Route path="user" element={<AccountMenu />}>
         <Route path="MyAccount" element={<MyAccount />} />
+        
+          <Route path="MyBooking" element={<MyBookings />} />
+           <Route path="MyCards" element={<MyCard />} />
+             <Route path="SavedPassengers" element={<MySaves />} />
+          <Route path="Notifications" element={<MySettingNotification/>}/>
       </Route>
     </Route>
 

@@ -1,8 +1,7 @@
-import { Outlet, NavLink } from "react-router-dom";
+import { Outlet, NavLink, useNavigate } from "react-router-dom";
 import {
   CreditCard,
   Clock,
-  ShoppingCart,
   CurrencyCircleDollar,
   Users,
   Envelope,
@@ -10,10 +9,19 @@ import {
   SignOut,
 } from "phosphor-react";
 
-export const AccountMenu = () => {
+export const AccountMenu = ({ setUser }) => {
+  const navigate = useNavigate();
+
   const linkClass = ({ isActive }) =>
     `flex items-center space-x-2 px-2 py-2 rounded-md cursor-pointer
      ${isActive ? "bg-blue-100 text-blue-600 font-medium" : "hover:bg-gray-100"}`;
+
+  const handleLogout = () => {
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    setUser?.(null); // nếu truyền setUser từ context hoặc parent
+    navigate("/login");
+  };
 
   return (
     <div className="flex bg-[#F9F9F9] space-x-3 w-3/4 mx-auto">
@@ -51,22 +59,11 @@ export const AccountMenu = () => {
               <span>My Booking</span>
             </NavLink>
           </li>
-          <li>
-            <NavLink to="/user/PurchaseList" className={linkClass}>
-              <ShoppingCart size={18} className="text-blue-500" />
-              <span>Purchase List</span>
-            </NavLink>
-          </li>
-          <li>
-            <NavLink to="/user/Refunds" className={linkClass}>
-              <CurrencyCircleDollar size={18} className="text-blue-500" />
-              <span>Refunds</span>
-            </NavLink>
-          </li>
+        
           <li>
             <NavLink to="/user/SavedPassengers" className={linkClass}>
               <Users size={18} className="text-blue-500" />
-              <span>Saved Passenger Details</span>
+              <span>Saved Passenger Posts</span>
             </NavLink>
           </li>
           <li>
@@ -90,15 +87,19 @@ export const AccountMenu = () => {
             <span>My Account</span>
           </NavLink>
 
-          <div className="flex items-center space-x-2 px-2 py-2 rounded-md hover:bg-gray-100 cursor-pointer text-red-500">
+          <button
+            type="button"
+            onClick={handleLogout}
+            className="flex items-center space-x-2 px-2 py-2 rounded-md hover:bg-gray-100 cursor-pointer text-red-500 w-full"
+          >
             <SignOut size={18} />
             <span>Log Out</span>
-          </div>
+          </button>
         </div>
       </div>
 
-      {/* Nội dung chính */}
-      <div className="mt-4 w-3/4 p-4  m-4 h-fit ">
+      {/* Main content */}
+      <div className="mt-4 w-3/4 p-4 m-4 h-fit">
         <Outlet />
       </div>
     </div>

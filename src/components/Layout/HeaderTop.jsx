@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
+import { data, Link } from "react-router-dom";
 import {
   Heart, Bell, Ticket, Bank, CaretDown, MagnifyingGlass, X, User,
   Clock, CreditCard, SignOut, Plus,
@@ -7,45 +7,42 @@ import {
 import BuildPackageSection from "./BuildPackageSection";
 import DepositModal from "./DepositModal";
 import { getUserApi } from "../../services/Authen/getUserApi";
-
+import { useNavigate } from "react-router-dom";
 export default function HeaderTop() {
   const [showDeposit, setShowDeposit] = useState(false);
   const [showBuildPackage, setShowBuildPackage] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const [user, setUser] = useState(null); // <-- Thêm user state
+   const navigate = useNavigate();
   const dropdownRef = useRef(null);
 
   // Load user khi có accessToken
 useEffect(() => {
-  // Kiểm tra user trong localStorage trước
-  const storedUser = localStorage.getItem("user");
-  if (storedUser) {
+  const token = localStorage.getItem("accessToken");
+
+  async function fetchUser() {
+    if (!token) return;
     try {
-      setUser(JSON.parse(storedUser));
-      return; // Nếu đã có user, không gọi API nữa
+      const data = await getUserApi(token);
+      setUser(data);
+        console.log(data);
+      localStorage.setItem("user", JSON.stringify(data));
     } catch (err) {
-      console.error("Failed to parse user from localStorage:", err);
-      localStorage.removeItem("user"); // xóa dữ liệu sai
+      console.error("Failed to fetch user:", err);
     }
   }
 
-  // Nếu chưa có, check accessToken và gọi API
-  const token = localStorage.getItem("accessToken");
-  if (token) {
-    getUserApi(token)
-      .then((data) => {
-        setUser(data);
-        localStorage.setItem("user", JSON.stringify(data)); // lưu dưới dạng string
-        console.log("User data:", data);
-      })
-      .catch((err) => {
-        console.error("Failed to fetch user:", err);
-      });
-  }
+
+  fetchUser(); // gọi ngay khi mount
+
+  const interval = setInterval(fetchUser, 3000000); // 30 giây gọi lại
+  return () => clearInterval(interval);
 }, []);
 
-  // Đóng dropdown khi click ra ngoài
+
+
   useEffect(() => {
+    
     function handleClickOutside(e) {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
         setShowDropdown(false);
@@ -102,7 +99,7 @@ useEffect(() => {
 
             {/* Dropdown menu */}
           {showDropdown && (
-  <div className="absolute right-0 mt-2 w-72 bg-white border border-gray-200 rounded-md shadow-lg z-50">
+  <div className="absolute right-0 mt-2 w-72 bg-white border border-gray-200 rounded-md shadow-lg z-1000">
     {/* Header user */}
    <div className="flex space-x-4 items-center px-4 py-3 border-b border-gray-200">
   <img
@@ -153,7 +150,7 @@ useEffect(() => {
       </li>
       <li>
         <Link
-          to="/user/MyBookings"
+          to="/user/MyBooking"
           className="flex items-center space-x-2 px-4 py-2 rounded-md hover:bg-gray-100 transition"
         >
           <Clock size={18} className="text-gray-600" />
@@ -162,11 +159,11 @@ useEffect(() => {
       </li>
       <li>
         <Link
-          to="/user/Payment"
+          to="/user/MyCards"
           className="flex items-center space-x-2 px-4 py-2 rounded-md hover:bg-gray-100 transition"
         >
           <CreditCard size={18} className="text-gray-600" />
-          <span className="text-sm font-medium text-gray-700">Payment</span>
+          <span className="text-sm font-medium text-gray-700">My payment</span>
         </Link>
       </li>
       <li>
@@ -181,11 +178,11 @@ useEffect(() => {
       <li>
         <button
           type="button"
-          className="w-full text-left flex items-center space-x-2 px-4 py-2 rounded-md hover:bg-gray-100 transition text-red-600"
+          className="w-full text-left cursor-pointer flex items-center space-x-2 px-4 py-2 rounded-md hover:bg-gray-100 transition text-red-600"
           onClick={() => {
             localStorage.removeItem("accessToken");
             localStorage.removeItem("refreshToken");
-            setUser(null);
+  navigate("/login");            setUser(null);
           }}
         >
           <SignOut size={18} />

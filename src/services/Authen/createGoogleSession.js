@@ -7,7 +7,7 @@ export async function createGoogleSession  (accessToken, refreshToken)  {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ access_token: accessToken, refresh_token: refreshToken }),
+      body: JSON.stringify({ accessToken: accessToken, refreshToken: refreshToken }),
     });
 
     if (!response.ok) {
