@@ -25,6 +25,7 @@ import MyBookings from "./components/AccountMenu/Mybooking";
 import MySettingNotification from "./components/AccountMenu/MySettingNotification";
 import MyCard from "./components/AccountMenu/MyCard";
 import MySaves from "./components/AccountMenu/MySaves";
+import BookingFailed from "./components/Bookings/BookingsFaild";
 
 
 
@@ -43,6 +44,7 @@ import MySaves from "./components/AccountMenu/MySaves";
       <Route path="booking/confirmation" element={<Bookingsconfirmation />} />
       <Route path="booking/checkout" element={<BookingCheckout />} />
       <Route path="booking/sucesss" element={<BookingSuccess />} />
+      <Route path="booking/failed" element={<BookingFailed/>}></Route>
    <Route path="travel/posts/:id" element={<Home />} />
       <Route path="user" element={<AccountMenu />}>
         <Route path="MyAccount" element={<MyAccount />} />

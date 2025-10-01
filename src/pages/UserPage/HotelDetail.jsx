@@ -21,6 +21,7 @@ export const HotelDetail = () => {
       try {
         const data = await getHotelDetailApi(id);
         const reviewData = await getReviewsApi(id);
+       
         setHotel(data);
         setReviews(reviewData);
       } catch (err) {
@@ -101,7 +102,7 @@ export const HotelDetail = () => {
         <HotelSidebar rating={hotel.averageRating} locationText={hotel.address} />
       </div>
 <div  id="amenities">
-    <RoomAvailability rooms={hotel.rooms || []} />
+    <RoomAvailability rooms={hotel.rooms || []} hotelId={hotel.hotelId} />
 </div>
     
 

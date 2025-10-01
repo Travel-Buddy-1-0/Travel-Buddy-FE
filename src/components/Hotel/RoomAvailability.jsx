@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Calendar, Users } from "phosphor-react";
 import { useNavigate } from "react-router-dom";
 
-export default function RoomAvailability({ rooms }) {
+export default function RoomAvailability({ rooms, hotelId }) {
   const navigate = useNavigate();
 
   // State cho ngày check-in / check-out
@@ -26,6 +26,7 @@ export default function RoomAvailability({ rooms }) {
     return true;
   };
 
+
   const filteredRooms = rooms
     .filter(isRoomAvailable)
     .filter((room) => (filterGuests ? room.capacity === filterGuests : true))
@@ -42,22 +43,39 @@ export default function RoomAvailability({ rooms }) {
         {/* Bộ lọc ngày + khách */}
         <div className="flex border border-blue-400 rounded-xl overflow-hidden shadow-md max-w-4xl bg-white">
           {/* Ngày */}
-          <div className="flex items-center gap-2 px-4 py-2 border-r border-gray-200 flex-1">
-            <Calendar size={20} className="text-gray-600" />
-            <input
-              type="date"
-              value={userCheckIn}
-              onChange={(e) => setUserCheckIn(e.target.value)}
-              className="text-sm text-gray-800 border-none focus:ring-2 focus:ring-blue-400 rounded-md px-2 py-1 transition"
-            />
-            <span className="text-gray-500">—</span>
-            <input
-              type="date"
-              value={userCheckOut}
-              onChange={(e) => setUserCheckOut(e.target.value)}
-              className="text-sm text-gray-800 border-none focus:ring-2 focus:ring-blue-400 rounded-md px-2 py-1 transition"
-            />
-          </div>
+        {/* Ngày */}
+<div className="flex items-center gap-2 px-4 py-2 border-r border-gray-200 flex-1">
+  <Calendar size={20} className="text-gray-600" />
+  <input
+    type="date"
+    value={userCheckIn}
+    onChange={(e) => {
+      const newCheckIn = e.target.value;
+      setUserCheckIn(newCheckIn);
+
+      // Nếu check-out nhỏ hơn check-in mới => cập nhật check-out = check-in + 1 ngày
+      const currentCheckOut = new Date(userCheckOut);
+      const minCheckOut = new Date(newCheckIn);
+      minCheckOut.setDate(minCheckOut.getDate() + 1);
+
+      if (currentCheckOut < minCheckOut) {
+        setUserCheckOut(minCheckOut.toISOString().split("T")[0]);
+      }
+    }}
+    className="text-sm text-gray-800 border-none focus:ring-2 focus:ring-blue-400 rounded-md px-2 py-1 transition"
+  />
+  <span className="text-gray-500">—</span>
+  <input
+    type="date"
+    value={userCheckOut}
+    min={new Date(new Date(userCheckIn).setDate(new Date(userCheckIn).getDate() + 1))
+      .toISOString()
+      .split("T")[0]} // giới hạn min = check-in + 1 ngày
+    onChange={(e) => setUserCheckOut(e.target.value)}
+    className="text-sm text-gray-800 border-none focus:ring-2 focus:ring-blue-400 rounded-md px-2 py-1 transition"
+  />
+</div>
+
 
           {/* Chọn số khách & phòng */}
           <div className="flex items-center gap-2 px-4 py-2 flex-1">
@@ -125,11 +143,22 @@ export default function RoomAvailability({ rooms }) {
                   </td>
                   <td className="p-3 border border-gray-300 text-center">
                     <button
-                      onClick={() => navigate("/booking/confirmation")}
+                      onClick={() =>
+                        navigate("/booking/confirmation", {
+                          state: {
+                            hotelId,
+                            room,
+                            checkIn: userCheckIn,
+                            checkOut: userCheckOut,
+                          },
+                        })
+                      }
                       className="block w-full cursor-pointer bg-blue-600 hover:bg-blue-700 transition text-white text-sm px-4 py-2 rounded-lg shadow-md"
                     >
                       Tôi sẽ đặt
                     </button>
+
+
                     <div className="text-xs text-gray-500 mt-1">
                       Bạn sẽ không bị trừ tiền ngay
                     </div>

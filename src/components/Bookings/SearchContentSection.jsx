@@ -41,7 +41,7 @@ export default function SearchContentSection() {
     setLoading(true);
     try {
       const payload = buildPayload();
-      const data = await searchHotelsApi(payload); // gọi thẳng hàm API
+      const data = await searchHotelsApi(payload); 
       setHotels(data);
      
     } catch (err) {
