@@ -3,7 +3,7 @@ export async function getUserApi() {
     const accessToken = localStorage.getItem("accessToken");
     if (!accessToken) throw new Error("Access token not found, please login.");
 
-    const response = await fetch("https://localhost:7056/Authentication/getUser", {
+    const response = await fetch("https://travel-buddy-web.azurewebsites.net/Authentication/getUser", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

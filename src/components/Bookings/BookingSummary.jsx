@@ -142,6 +142,7 @@ export default function BookingSummary({
           className="p-2 cursor-pointer bg-blue-400 text-white rounded-sm text-center uppercase font-bold"
         >
           Tiếp theo
+          
         </div>
       )}
     </div>

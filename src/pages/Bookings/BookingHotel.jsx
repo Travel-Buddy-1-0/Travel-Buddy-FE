@@ -3,12 +3,15 @@ import { MapPin, Calendar, Users, MagnifyingGlass } from "phosphor-react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import DefaultContentSection from "../../components/Bookings/DefaultContentSection";
 import SearchContentSection from "../../components/Bookings/SearchContentSection";
+import NotificationInfor from "../../components/Layout/NotificationInfor";
+
 
 export default function BookingHotel() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
   const [provinces, setProvinces] = useState([]);
+  const [notification, setNotification] = useState({ message: "", type: "info" }); // 🔔 State cho thông báo
   const [searchData, setSearchData] = useState({
     location: "",
     checkIn: "",
@@ -36,7 +39,7 @@ export default function BookingHotel() {
   // Xử lý khi bấm Search
   const handleSearch = () => {
     if (!searchData.location) {
-      alert("Vui lòng chọn địa điểm!");
+      setNotification({ message: "⚠️ Vui lòng chọn địa điểm!", type: "warning" }); // 🔔 Thay alert
       return;
     }
     navigate(
@@ -54,6 +57,13 @@ export default function BookingHotel() {
 
   return (
     <div>
+      {/* 🔔 Notification hiển thị ở giữa màn hình */}
+      <NotificationInfor
+        message={notification.message}
+        type={notification.type}
+        onClose={() => setNotification({ message: "", type: "info" })}
+      />
+
       {/* Nếu chưa search thì hiện background */}
       {!searchParams.get("location") && (
         <div
@@ -77,9 +87,11 @@ export default function BookingHotel() {
       {/* Search Box */}
       <div
         className={`py-3 bg-white mx-auto border border-gray-200 shadow-md transition-all duration-300 
-        ${!searchParams.get("location")
-          ? "relative top-[220px] rounded-2xl w-fit"
-          : "sticky top-0 z-50 w-full rounded-none"}`}
+        ${
+          !searchParams.get("location")
+            ? "relative top-[220px] rounded-2xl w-fit"
+            : "sticky top-0 z-50 w-full rounded-none"
+        }`}
       >
         {/* Tabs */}
         <div className="flex space-x-2 items-center mb-3 ml-3">
@@ -175,7 +187,7 @@ export default function BookingHotel() {
           {/* Search Button */}
           <button
             onClick={handleSearch}
-            className="bg-blue-400 text-white rounded-full px-4 py-2 flex items-center space-x-1 hover:bg-blue-500 text-sm ml-4"
+            className="bg-blue-400 cursor-pointer text-white rounded-full px-4 py-2 flex items-center space-x-1 hover:bg-blue-500 text-sm ml-4"
           >
             <MagnifyingGlass size={16} weight="bold" />
             <span>Search</span>

@@ -23,8 +23,7 @@ export default function Success() {
     const handleConfirm = async () => {
       try {
         const result = await confirmRegisterApi(payload);
-        console.log("Confirm success:", result);
-
+      
         setStatus("✅ Xác nhận thành công! Bạn sẽ được chuyển về login...");
         setTimeout(() => navigate("/login"), 5000);
       } catch (err) {

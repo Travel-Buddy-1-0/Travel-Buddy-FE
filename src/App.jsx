@@ -26,6 +26,7 @@ import MySettingNotification from "./components/AccountMenu/MySettingNotificatio
 import MyCard from "./components/AccountMenu/MyCard";
 import MySaves from "./components/AccountMenu/MySaves";
 import BookingFailed from "./components/Bookings/BookingsFaild";
+import ErrorPage from "./components/Layout/ErrorPage";
 
 
 
@@ -51,10 +52,11 @@ import BookingFailed from "./components/Bookings/BookingsFaild";
         
           <Route path="MyBooking" element={<MyBookings />} />
            <Route path="MyCards" element={<MyCard />} />
-             <Route path="SavedPassengers" element={<MySaves />} />
+             <Route path="Saved" element={<MySaves />} />
           <Route path="Notifications" element={<MySettingNotification/>}/>
       </Route>
     </Route>
+      <Route path="ErrorPage" element={<ErrorPage/>} />
 
     {/* Layout dành cho login/register */}
     <Route element={<LayoutAuthen />}>
@@ -67,6 +69,7 @@ import BookingFailed from "./components/Bookings/BookingsFaild";
       <Route path="Authentication/oauth-callback" element={<GoogleCallback />} />
     </Route>
   </Routes>
+
 </BrowserRouter>
 
     );

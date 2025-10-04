@@ -15,29 +15,49 @@ export default function HeaderTop() {
   const [user, setUser] = useState(null); // <-- Thêm user state
    const navigate = useNavigate();
   const dropdownRef = useRef(null);
-
+  const [query, setQuery] = useState(localStorage.getItem("searchQuery") || "");
+  
   // Load user khi có accessToken
 useEffect(() => {
   const token = localStorage.getItem("accessToken");
 
   async function fetchUser() {
-    if (!token) return;
+    if (!token) return; // không có token thì thôi
+
     try {
       const data = await getUserApi(token);
       setUser(data);
-        console.log(data);
+      console.log("User fetched:", data);
       localStorage.setItem("user", JSON.stringify(data));
     } catch (err) {
       console.error("Failed to fetch user:", err);
+
+      // Nếu getUser fail => xóa token + về login
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      navigate("/login");
     }
   }
 
+  fetchUser(); // gọi khi mount
 
-  fetchUser(); // gọi ngay khi mount
-
-  const interval = setInterval(fetchUser, 3000000); // 30 giây gọi lại
+  const interval = setInterval(fetchUser, 2500000); // 41 phút
   return () => clearInterval(interval);
-}, []);
+}, [navigate]);
+
+ const handleSubmit = (e) => {
+  e.preventDefault();
+  if (!query.trim()) return;
+
+  // lưu query
+  localStorage.setItem("searchQuery", query.trim());
+
+  // điều hướng (có thể thay "/" bằng /search?query=... )
+  navigate("/");
+
+  // clear input
+  setQuery(""); 
+};
 
 
 
@@ -56,26 +76,37 @@ useEffect(() => {
     <>
       <header className="flex justify-between items-center px-6 border-b border-gray-300 bg-white h-16 relative">
         {/* Search box */}
-        <div className="flex items-center bg-gray-100 rounded-md px-4 py-2 w-1/2">
-          <MagnifyingGlass size={18} className="text-gray-500" />
-          <input
-            type="text"
-            placeholder="Search..."
-            className="ml-2 bg-transparent outline-none w-full text-sm"
-          />
-        </div>
+             {/* Search box */}
+      {/* Search box */}
+ <form
+      onSubmit={handleSubmit}
+      className="flex items-center bg-gray-100 rounded-md px-4 py-2 w-1/2"
+    >
+      <input
+        type="text"
+        placeholder="Search..."
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        className="ml-2 bg-transparent outline-none w-full text-sm"
+      />
+      <button type="submit">
+        <MagnifyingGlass size={18} className="text-gray-500 cursor-pointer" />
+      </button>
+    </form>
+
+
 
         {/* Actions */}
-        <div className="flex mr-4 space-x-6 items-center text-black">
+        <div className="flex mr-4 space-x-6 items-center  text-black">
           <button
             onClick={() => setShowBuildPackage(true)}
-            className="border text-sm border-black px-4 py-2 hover:bg-[#4584FF] hover:text-white rounded-md transition"
+            className="border text-sm border-black px-4 py-2 cursor-pointer hover:border-none hover:bg-[#4584FF] hover:text-white rounded-md transition"
           >
             Build your package
           </button>
 
           <Bell size={20} weight="regular" className="cursor-pointer" />
-          <Ticket size={20} weight="regular" className="cursor-pointer" />
+        
           <Bank
             size={20}
             weight="regular"
@@ -130,12 +161,22 @@ useEffect(() => {
 
 
     {/* Balance */}
-    <div className="flex items-center justify-between px-4 py-2 border-b border-gray-200 text-sm">
-      <span className="font-semibold">
-        {user?.email ? `${user.email}` : "Vui lòng login"}
-      </span>
-      
-    </div>
+<div className="flex items-center justify-between px-4 py-2 border-b border-gray-200 text-sm">
+  {user?.email ? (
+    <span className="font-semibold">{user.email}</span>
+  ) : (
+    <button
+      onClick={() => navigate("/login")}
+      className="flex justify-center items-center space-x-2 w-full mx-auto p-2 text-xs font-semibold text-blue-500 hover:bg-blue-500 hover:text-white rounded-md transition"
+    >
+      <User size={16} weight="bold" />
+      <span>Login</span>
+    </button>
+  )}
+</div>
+
+
+
 
     {/* Menu */}
     <ul className="py-2 text-sm text-gray-700">
@@ -198,7 +239,7 @@ useEffect(() => {
       </header>
 
       {/* Modal Deposit */}
-      {showDeposit && <DepositModal onClose={() => setShowDeposit(false)} />}
+      {showDeposit && <DepositModal  onClose={() => setShowDeposit(false)} />}
 
       {/* Modal Build Package */}
       {showBuildPackage && (

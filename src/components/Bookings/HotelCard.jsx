@@ -7,14 +7,19 @@ export default function HotelCard({ hotel }) {
   // xử lý image
   const image = hotel.image?.replace(/^"|"$/g, ""); // loại bỏ dấu " dư
 
-  // parse style để lấy amenities
-  let amenities = [];
-  try {
-    const styleObj = hotel.style ? JSON.parse(hotel.style) : null;
-    amenities = styleObj?.amenities || [];
-  } catch (err) {
-    amenities = [];
-  }
+  
+ // parse style để lấy amenities và stars
+let amenities = [];
+let stars = 0;
+try {
+  const styleObj = hotel.style ? JSON.parse(hotel.style) : null;
+  amenities = styleObj?.amenities || [];
+  stars = styleObj?.stars || 0;
+} catch (err) {
+  amenities = [];
+  stars = 0;
+}
+
   // tính giá trung bình USD
 const usdPrice =
   hotel.rooms && hotel.rooms.length > 0
@@ -42,7 +47,7 @@ const usdPrice =
           <h1 className="text-lg font-bold text-blue-600 flex items-center gap-2">
             {hotel.name}
             <span className="text-yellow-500 text-sm">
-              {"⭐".repeat(Math.round(hotel.averageRating))}
+              {"⭐".repeat(stars)}
             </span>
           </h1>
 

@@ -124,7 +124,7 @@ export default function BuildPackageSection() {
   };
 
   return (
-    <section className="flex justify-center py-4">
+    <section className="flex justify-center py-4 cursor-pointer">
       <div className="bg-white rounded-xl w-full max-w-lg p-6">
         {!success ? (
           <>

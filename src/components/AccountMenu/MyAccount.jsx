@@ -1,14 +1,18 @@
 import { useState, useEffect } from "react";
 import { Eye, EyeSlash } from "phosphor-react";
 import { updateUserProfile } from "../../services/Authen/updateUserProfile"; 
-import { updatePassword } from "../../services/Authen/updatePassword ";
+import { updatePassword } from "../../services/Authen/updatePassword "; 
+import Notification from "../Layout/Notification";
+
 
 export default function MyAccount() {
-  const [activeTab, setActiveTab] = useState("account"); // account | security
+  const [activeTab, setActiveTab] = useState("account");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+
+  const [notification, setNotification] = useState(null); // ✅ quản lý thông báo
 
   const [user, setUser] = useState({
     email: "",
@@ -20,10 +24,11 @@ export default function MyAccount() {
     photo: "",
   });
 
-  // Lấy dữ liệu user từ localStorage
-  useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
+  // Load user từ localStorage
+useEffect(() => {
+  const storedUser = localStorage.getItem("user");
+  if (storedUser && storedUser !== "undefined" && storedUser !== "null") {
+    try {
       const parsed = JSON.parse(storedUser);
       setUser({
         email: parsed.email || "",
@@ -34,39 +39,47 @@ export default function MyAccount() {
         phoneNumber: parsed.phoneNumber || "",
         photo: parsed.photo || "",
       });
+    } catch (err) {
+      console.error("Failed to parse user from localStorage:", err);
     }
-  }, []);
+  }
+}, []);
 
+
+  // Validate password
   const validatePassword = (pwd) => {
     const regex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[\W_]).{6,}$/;
     return regex.test(pwd);
   };
 
+  // Xử lý đổi mật khẩu
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (password !== confirmPassword) {
-      alert("Confirm password does not match");
+      setNotification({ type: "error", message: "Confirm password does not match" });
       return;
     }
 
     if (!validatePassword(password)) {
-      alert(
-        "Password must be at least 6 characters, start with a capital letter, include letters, numbers, and a special character."
-      );
+      setNotification({
+        type: "error",
+        message: "Password must be at least 6 characters, include uppercase, lowercase, number, and special character",
+      });
       return;
     }
 
     try {
       const res = await updatePassword(password);
-      alert(res);
+      setNotification({ type: "success", message: res || "Password updated successfully!" });
       setPassword("");
       setConfirmPassword("");
     } catch (err) {
-      alert("Failed to update password: " + err.message);
+      setNotification({ type: "error", message: "Failed to update password: " + err.message });
     }
   };
 
+  // Xử lý lưu thông tin user
   const handleSave = async () => {
     const updateData = {
       username: user.username || "",
@@ -80,24 +93,32 @@ export default function MyAccount() {
 
     try {
       const updatedUser = await updateUserProfile(updateData);
-      // Merge với state hiện tại
-      setUser((prev) => ({
-        ...prev,
+
+      const newUser = {
+        ...user,
         ...updatedUser.profile,
-      }));
-      localStorage.setItem(
-        "user",
-        JSON.stringify({ ...user, ...updatedUser.profile })
-      );
-      alert("Profile updated successfully!");
+      };
+
+      setUser(newUser);
+      localStorage.setItem("user", JSON.stringify(newUser));
+
+      setNotification({ type: "success", message: "Profile updated successfully!" });
     } catch (err) {
-      console.error("Failed to update profile", err);
-      alert("Failed to update profile: " + err.message);
+      setNotification({ type: "error", message: "Failed to update profile: " + err.message });
     }
   };
 
   return (
     <div className="p-4">
+      {/* Hiện thông báo */}
+      {notification && (
+        <Notification
+          type={notification.type}
+          message={notification.message}
+          onClose={() => setNotification(null)}
+        />
+      )}
+
       <div className="font-bold text-2xl mb-4">Settings</div>
 
       {/* Tabs */}
@@ -124,7 +145,7 @@ export default function MyAccount() {
         </button>
       </div>
 
-      {/* Account Information */}
+      {/* Account Info */}
       {activeTab === "account" && (
         <div className="px-3 py-4 bg-white rounded-lg shadow-md border border-gray-200">
           <h2 className="font-semibold text-gray-800 border-b border-gray-200 pb-2 mb-4">
@@ -138,7 +159,7 @@ export default function MyAccount() {
             </label>
             <input
               type="text"
-              value={user.email || ""}
+              value={user.email}
               disabled
               className="w-full px-3 py-2 border-gray-300 border rounded-md bg-gray-100 text-gray-600 cursor-not-allowed"
             />
@@ -154,10 +175,8 @@ export default function MyAccount() {
             </label>
             <input
               type="text"
-              value={user.fullName || ""}
-              onChange={(e) =>
-                setUser({ ...user, fullName: e.target.value })
-              }
+              value={user.fullName}
+              onChange={(e) => setUser({ ...user, fullName: e.target.value })}
               className="w-full px-3 py-2 border-gray-300 border rounded-md focus:ring-2 focus:ring-blue-400 focus:outline-none text-gray-800"
             />
           </div>
@@ -169,7 +188,7 @@ export default function MyAccount() {
                 Gender
               </label>
               <select
-                value={user.sex || ""}
+                value={user.sex}
                 onChange={(e) => setUser({ ...user, sex: e.target.value })}
                 className="w-full px-3 py-2 border-gray-300 border rounded-md text-gray-800 focus:ring-2 focus:ring-blue-400"
               >
@@ -184,14 +203,8 @@ export default function MyAccount() {
               </label>
               <input
                 type="date"
-                value={
-                  user.dateOfBirth
-                    ? new Date(user.dateOfBirth).toISOString().split("T")[0]
-                    : ""
-                }
-                onChange={(e) =>
-                  setUser({ ...user, dateOfBirth: e.target.value })
-                }
+                value={user.dateOfBirth ? new Date(user.dateOfBirth).toISOString().split("T")[0] : ""}
+                onChange={(e) => setUser({ ...user, dateOfBirth: e.target.value })}
                 className="w-full px-3 py-2 border-gray-300 border rounded-md text-gray-800 focus:ring-2 focus:ring-blue-400"
               />
             </div>
@@ -204,10 +217,8 @@ export default function MyAccount() {
             </label>
             <input
               type="text"
-              value={user.phoneNumber || ""}
-              onChange={(e) =>
-                setUser({ ...user, phoneNumber: e.target.value })
-              }
+              value={user.phoneNumber}
+              onChange={(e) => setUser({ ...user, phoneNumber: e.target.value })}
               className="w-full px-3 py-2 border-gray-300 border rounded-md focus:ring-2 focus:ring-blue-400 text-gray-800"
             />
           </div>
@@ -217,7 +228,7 @@ export default function MyAccount() {
               Maybe later
             </button>
             <button
-              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+              className="px-4 py-2 cursor-pointer bg-blue-600 text-white rounded-md hover:bg-blue-700"
               onClick={handleSave}
             >
               Save
@@ -284,7 +295,7 @@ export default function MyAccount() {
 
             <button
               type="submit"
-              className="bg-blue-500 text-white px-4 py-2 cursor-pointer text-sm rounded-md font-medium hover:bg-blue-600"
+              className="bg-blue-500  text-white px-4 py-2 cursor-pointer text-sm rounded-md font-medium hover:bg-blue-600"
             >
               Save New Password
             </button>

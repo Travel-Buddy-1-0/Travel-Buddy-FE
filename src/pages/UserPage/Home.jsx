@@ -27,8 +27,9 @@ export default function Home() {
   const navigate = useNavigate();
   const { id } = useParams(); // lấy id từ URL
 
+
   // 🔹 Lấy travelPackage từ sessionStorage
-  const savedPackage = sessionStorage.getItem("travelPackage");
+    const savedPackage = sessionStorage.getItem("travelPackage");
   let initialQuery = "travel";
   let cityQuery = "";
   let userActivities = [];
@@ -39,7 +40,7 @@ export default function Home() {
     // Lấy city + query
     const destination = pkg.destination || "";
     const nameOnly = destination.replace(/^(Tỉnh|Thành phố)\s+/i, "");
-    const cleanCity = removeVietnameseTones(nameOnly);
+    const cleanCity = removeVietnameseTones(nameOnly);  
     cityQuery = cleanCity ? `${cleanCity} vietnam` : "";
     initialQuery = cityQuery || "travel";
 

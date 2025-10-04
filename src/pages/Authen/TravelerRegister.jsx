@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Eye, EyeSlash } from "phosphor-react";
+import { useNavigate } from "react-router-dom";
 import { registerTraveler } from "../../services/Authen/TravelerRegister";
 
 export default function TravelerRegister() {
@@ -9,8 +10,11 @@ export default function TravelerRegister() {
     confirmPassword: "",
   });
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const navigate = useNavigate();
 
   const validatePassword = (password) => {
     const minLength = /.{8,}/;
@@ -32,6 +36,7 @@ export default function TravelerRegister() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setSuccess(false);
 
     const passwordError = validatePassword(formData.password);
     if (passwordError) {
@@ -46,30 +51,68 @@ export default function TravelerRegister() {
 
     try {
       const data = await registerTraveler(formData.email, formData.password);
-      console.log("Register success:", data);
-      alert("Register success! Please check your email to confirm.");
+     
+      setSuccess(true);
     } catch (err) {
-      setError(err.message);
+      setError("Register failed. Please try again.");
     }
   };
 
   return (
-    <div className="w-full max-w-sm">
+    <div className="w-full max-w-sm mx-auto">
       {/* Heading */}
       <div>
-        <h2 className="text-xl font-bold text-gray-900">
+        <h2 className="text-xl font-bold text-gray-900 text-center">
           Register Traveler Account
         </h2>
-        <p className="text-gray-600 text-sm mt-2">
+        <p className="text-gray-600 text-sm mt-2 text-center">
           Already have an account?{" "}
-          <a href="#" className="text-blue-500 font-medium hover:underline">
+          <button
+            type="button"
+            onClick={() => navigate("/login")}
+            className="text-blue-500 cursor-pointer font-medium hover:underline"
+          >
             Login here
-          </a>
+          </button>
         </p>
       </div>
 
+      {/* Message Section */}
+  {(error || success) && (
+  <div className="fixed inset-0 flex items-center justify-center backdrop-blur-sm bg-white/30 z-50">
+    <div className="bg-white rounded-lg shadow-lg p-6 max-w-lg w-full relative">
+      {/* Nút đóng (X) */}
+      <button
+        onClick={() => {
+          setError("");
+          setSuccess(false);
+        }}
+        className="absolute top-3 right-3 cursor-pointer text-gray-500 hover:text-gray-700"
+      >
+        ✖
+      </button>
+
+      {/* Nội dung thông báo */}
+      <div className="text-center">
+        {error && (
+          <div className="text-red-600 font-medium">
+             {error}
+          </div>
+        )}
+        {success && (
+          <div className="text-green-600 font-medium">
+            ✅ Register success! Please check your email to confirm your account.
+          </div>
+        )}
+      </div>
+    </div>
+  </div>
+)}
+
+
+
       {/* Form */}
-      <form className="space-y-5 mt-10" onSubmit={handleSubmit}>
+      <form className="space-y-8 mt-10" onSubmit={handleSubmit}>
         {/* Email */}
         <div>
           <label className="block text-xs font-medium text-gray-700 mb-1">
@@ -143,15 +186,10 @@ export default function TravelerRegister() {
           </div>
         </div>
 
-        {/* Error Message */}
-        {error && (
-          <div className="text-red-500 text-sm font-medium">{error}</div>
-        )}
-
         {/* Submit */}
         <button
           type="submit"
-          className="w-full bg-blue-500 text-white rounded-md py-2 font-semibold text-sm hover:bg-blue-600 transition"
+          className="w-full bg-blue-500 mt-2  text-white rounded-md py-2 font-semibold text-sm hover:bg-blue-600 transition"
         >
           Register
         </button>

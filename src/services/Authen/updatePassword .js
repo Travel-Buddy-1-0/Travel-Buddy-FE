@@ -8,7 +8,7 @@ export async function  updatePassword(newPassword) {
       throw new Error("User is not authenticated");
     }
 
-    const response = await fetch("https://localhost:7056/Authentication/updatepassword", {
+    const response = await fetch("https://travel-buddy-web.azurewebsites.net/Authentication/updatepassword", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

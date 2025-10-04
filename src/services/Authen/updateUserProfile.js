@@ -27,7 +27,7 @@ export async function updateUserProfile(profileData) {
     };
 
     const response = await fetch(
-      "https://localhost:7056/user/updateInformation",
+      "https://travel-buddy-web.azurewebsites.net/user/updateInformation",
       {
         method: "PUT",
         headers: {

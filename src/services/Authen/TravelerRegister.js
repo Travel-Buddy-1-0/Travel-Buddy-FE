@@ -1,7 +1,7 @@
 // authService.js
 export async function registerTraveler(email, password) {
   try {
-    const response = await fetch("https://localhost:7056/Authentication/register", {
+    const response = await fetch("https://travel-buddy-web.azurewebsites.net/Authentication/register", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

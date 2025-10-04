@@ -2,7 +2,7 @@
 export async function createGoogleSession  (accessToken, refreshToken)  {
   try {
     console.log("Creating Google session with tokens:", { accessToken, refreshToken });
-    const response = await fetch("https://localhost:7056/Authentication/google-session", {
+    const response = await fetch("https://travel-buddy-web.azurewebsites.net/Authentication/google-session", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -12,7 +12,7 @@ export async function createGoogleSession  (accessToken, refreshToken)  {
 
     if (!response.ok) {
       const errorData = await response.json();
-      console.log(response)
+    
       throw new Error(errorData?.error || "Failed to create Google session");
     }
 

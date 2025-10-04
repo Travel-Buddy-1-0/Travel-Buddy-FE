@@ -3,7 +3,7 @@ export async function getHotelDetailApi(id) {
     if (!id) throw new Error("Hotel ID is required");
 
     const response = await fetch(
-      `https://localhost:7056/Hotel/${id}`,
+      `https://travel-buddy-web.azurewebsites.net/Hotel/${id}`,
       {
         method: "GET",
         headers: {

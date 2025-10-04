@@ -11,7 +11,7 @@ export async function confirmRegisterApi(payload) {
 
     console.log("Final body gửi BE:", body);
 
-    const response = await fetch("https://localhost:7056/Authentication/confirmRegister", {
+    const response = await fetch("https://travel-buddy-web.azurewebsites.net/Authentication/confirmRegister", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),

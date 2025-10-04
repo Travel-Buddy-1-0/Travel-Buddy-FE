@@ -41,9 +41,11 @@ export const AccountMenu = ({ setUser }) => {
         </div>
 
         {/* Loyalty badge */}
-        <div className="bg-gradient-to-r from-amber-300 to-amber-500 text-white text-sm font-medium px-3 py-2 rounded-md mt-3">
-          🐻 You’re our <span className="font-bold">Bronze Priority</span>
-        </div>
+      <div className="bg-gradient-to-r from-green-400 to-green-500 text-white text-sm font-medium px-3 py-2 rounded-md mt-3">
+  🌱 You’re a <span className="font-bold">Travel Explorer</span>
+</div>
+
+
 
         {/* Menu items */}
         <ul className="mt-4 text-gray-700 text-sm space-y-1">
@@ -61,7 +63,7 @@ export const AccountMenu = ({ setUser }) => {
           </li>
         
           <li>
-            <NavLink to="/user/SavedPassengers" className={linkClass}>
+            <NavLink to="/user/Saved" className={linkClass}>
               <Users size={18} className="text-blue-500" />
               <span>Saved Passenger Posts</span>
             </NavLink>

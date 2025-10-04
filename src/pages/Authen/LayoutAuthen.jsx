@@ -30,7 +30,7 @@ export default function LayoutAuthen() {
           </Link>
 
           <Link
-            to="/bussinessRegister"
+            to="/ErrorPage"
             className="bg-none ml-2 px-3 py-1 rounded-full hover:bg-blue-400 hover:text-black flex items-center text-sm"
           >
             <div className="italic text-sm mr-1">for</div>
