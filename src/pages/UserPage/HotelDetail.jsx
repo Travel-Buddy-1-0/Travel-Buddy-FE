@@ -4,11 +4,11 @@ import { useParams } from "react-router-dom";
 import HotelHeaderCard from "../../components/Hotel/HotelHeaderCard";
 import HotelGallery from "../../components/Hotel/HotelGallery";
 import HotelDescription from "../../components/Hotel/HotelDescription";
-import HotelSidebar from "../../components/Hotel/HotelSiderBar";
 import RoomAvailability from "../../components/Hotel/RoomAvailability";
 import ReviewSection from "../../components/Hotel/HotelReviews";
 import { getHotelDetailApi } from "../../services/Bookings/HotelDetail";
 import { getReviewsApi } from "../../services/Bookings/HotelReviews";
+import HotelSidebar from "../../components/Hotel/HotelSidebar";
 
 export const HotelDetail = () => {
   const { id } = useParams(); // /hotel/:id
