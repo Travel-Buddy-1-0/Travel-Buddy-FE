@@ -1,0 +1,72 @@
+
+
+/* ========================
+   Custom Animations
+======================== */
+@keyframes londonFloat {
+  0%,100% { transform: translateY(0) translateX(0);}
+  25% { transform: translateY(-20px) translateX(20px);}
+  50% { transform: translateY(0) translateX(40px);}
+  75% { transform: translateY(20px) translateX(20px);}
+}
+
+@keyframes parisFloat {
+  0%,100% { transform: translateY(0) translateX(0);}
+  20% { transform: translateY(-10px) translateX(-30px);}
+  50% { transform: translateY(10px) translateX(-60px);}
+  80% { transform: translateY(-10px) translateX(-30px);}
+}
+
+@keyframes romeFloat {
+  0%,100% { transform: translateY(0) translateX(0);}
+  30% { transform: translateY(-15px) translateX(15px);}
+  60% { transform: translateY(15px) translateX(30px);}
+  90% { transform: translateY(-15px) translateX(15px);}
+}
+
+.animate-london {
+  animation: londonFloat 14s ease-in-out infinite;
+}
+.animate-paris {
+  animation: parisFloat 16s ease-in-out infinite;
+}
+.animate-rome {
+  animation: romeFloat 18s ease-in-out infinite;
+}
+
+/* Chat AI */
+  .wave {
+  animation-name: wave-animation;  /* Refers to the name of your @keyframes element below */
+  animation-duration: 2.5s;        /* Change to speed up or slow down */
+  animation-iteration-count: infinite;  /* Never stop waving :) */
+  transform-origin: 70% 70%;       /* Pivot around the bottom-left palm */
+  display: inline-block;
+}
+
+@keyframes wave-animation {
+    0% { transform: rotate( 0.0deg) }
+   10% { transform: rotate(14.0deg) }  /* The following five values can be played with to make the waving more or less extreme */
+   20% { transform: rotate(-8.0deg) }
+   30% { transform: rotate(14.0deg) }
+   40% { transform: rotate(-4.0deg) }
+   50% { transform: rotate(10.0deg) }
+   60% { transform: rotate( 0.0deg) }  /* Reset for the last half to pause */
+  100% { transform: rotate( 0.0deg) }
+}
+
+.my-masonry-grid {
+  display: flex;
+  margin-left: -16px; /* giảm khoảng hở */
+  width: auto;
+}
+.my-masonry-grid_column {
+  padding-left: 16px; /* spacing giữa cột */
+  background-clip: padding-box;
+}
+
+.my-masonry-grid_column > div {
+  margin-bottom: 16px;
+}
+
+
+
