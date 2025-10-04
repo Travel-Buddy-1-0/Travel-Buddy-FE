@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
-import { Check } from "phosphor-react";
+
 import { getCoordinates } from "../../services/Map/Coordinates";
 
 
