@@ -44,7 +44,7 @@ import ErrorPage from "./components/Layout/ErrorPage";
       <Route path="booking/hotel/:id" element={<HotelDetail />} />
       <Route path="booking/confirmation" element={<Bookingsconfirmation />} />
       <Route path="booking/checkout" element={<BookingCheckout />} />
-      <Route path="booking/sucesss" element={<BookingSuccess />} />
+      <Route path="booking/success" element={<BookingSuccess />} />
       <Route path="booking/failed" element={<BookingFailed/>}></Route>
    <Route path="travel/posts/:id" element={<Home />} />
       <Route path="user" element={<AccountMenu />}>

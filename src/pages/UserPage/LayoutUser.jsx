@@ -22,7 +22,7 @@ export const LayoutDefault = () => {
       <HeaderLeft collapsed={collapsed} toggle={() => setCollapsed(!collapsed)} />
       <div className="flex-1 flex flex-col">
         <HeaderTop />
-        <ChatAi />
+        {/* <ChatAi /> */}
         
      <Outlet />
   

@@ -244,6 +244,40 @@ export default function DefaultContentSection() {
           ))}
         </div>
       </div>
+       {/* Why Travel Buddy */}
+      <div className="my-20 mx-auto max-w-6xl px-6">
+        <div className="font-bold text-2xl mb-8">Why choosing Travel Buddy?</div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+          {[
+            {
+              img: "https://t-cf.bstatic.com/design-assets/assets/v3.160.0/illustrations-traveller/FreeCancellation@2x.png",
+              title: "Free Cancellation",
+              desc: "Cancel for free up to 24 hours before check-in."
+            },
+            {
+              img: "https://t-cf.bstatic.com/design-assets/assets/v3.160.0/illustrations-traveller/Reviews@2x.png",
+              title: "Best Price",
+              desc: "Book at the ideal price guaranteed."
+            },
+            {
+              img: "https://t-cf.bstatic.com/design-assets/assets/v3.160.0/illustrations-traveller/CustomerSupport@2x.png",
+              title: "24/7 Support",
+              desc: "We are here to help you anytime you need."
+            },
+            {
+              img: "https://t-cf.bstatic.com/design-assets/assets/v3.160.0/illustrations-traveller/TripsGlobe@2x.png",
+              title: "Secure Payment",
+              desc: "All payments are safe and encrypted."
+            }
+          ].map((item, i) => (
+            <div key={i} className="flex flex-col text-left p-4 bg-white rounded-3xl border border-gray-100 shadow-sm">
+              <img className="w-20 h-20 mb-4" src={item.img} alt={item.title} />
+              <div className="font-semibold text-lg mb-2">{item.title}</div>
+              <div className="text-gray-500 text-sm">{item.desc}</div>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
