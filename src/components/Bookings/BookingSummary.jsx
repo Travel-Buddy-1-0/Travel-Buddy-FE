@@ -5,7 +5,8 @@ export default function BookingSummary({
   hotelId,
   checkInDate,
   checkOutDate,
-  customerName,
+  customerFirstName,
+  customerLastName,
   customerEmail,
   customerPhone,
   specialRequest,
@@ -77,7 +78,7 @@ export default function BookingSummary({
           <span>{roomSummary}</span>
 
           <p className="font-medium mt-2">Khách chính:</p>
-          <span>{customerName}</span>
+          <span>{`${customerFirstName} ${customerLastName}`}</span>
 
           <p className="font-medium mt-2">Email:</p>
           <span>{customerEmail}</span>
@@ -125,7 +126,8 @@ export default function BookingSummary({
           onClick={() =>
             navigate(nextPath, {
               state: {
-                customerName,
+                customerFirstName,
+                customerLastName,
                 customerEmail,
                 customerPhone,
                 specialRequest,

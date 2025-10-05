@@ -6,16 +6,16 @@ import HotelSummaryCard from "../Hotel/HotelSummaryCard";
 import BookingSummary from "./BookingSummary";
 import { bookingHotel } from "../../services/Bookings/bookHotel";
 
-
-
 export default function BookingCheckout() {
   const [agree, setAgree] = useState(true);
+  const [paymentMethod, setPaymentMethod] = useState(2); // ✅ Mặc định chọn Ví TravelBuddy
   const navigate = useNavigate();
   const location = useLocation();
 
   // Lấy dữ liệu từ state
   const {
-    customerName,
+    customerFirstName,
+    customerLastName,
     customerEmail,
     customerPhone,
     specialRequest,
@@ -30,57 +30,63 @@ export default function BookingCheckout() {
 
   const user = JSON.parse(localStorage.getItem("user"));
   const userId = user?.userId;
-  console.log(userId)
+  console.log("UserId:", userId);
 
   const handleBooking = async () => {
-    if (!userId || !room) return;
+    if (!userId || !room) {
+      alert("Thiếu thông tin đặt phòng hoặc người dùng!");
+      return;
+    }
 
+    // ✅ Chuẩn hóa dữ liệu gửi về backend
     const bookingData = {
-  customerName,
-  customerEmail,
-  customerPhone,
-  specialRequest: specialRequest || "Không có",
-  checkIn,
-  checkOut,
-  totalPrice: totalPrice || 0,
-  nights: nights || 1,
-  guests: guests || 1,
-  hotelId: hotelId || 0,
-  roomId: room?.roomId || 0,
-//   restaurantId: 0  // thêm để backend không lỗi
-};
-
+  
+      checkIn,
+      checkOut,
+      totalPrice: totalPrice || 0,
+      nights: nights || 1,
+      guests: guests || 1,
+      hotelId: hotelId || 0,
+      roomId: room?.roomId || 0,
+      
+      firstName: customerFirstName || "",
+      lastName: customerLastName || "",
+      email: customerEmail || "",
+      country: "Vietnam",
+      phone: customerPhone || "",
+      note: specialRequest || "Không có yêu cầu đặc biệt",
+      typePayment: paymentMethod 
+    };
 
     try {
       const result = await bookingHotel(bookingData);
-      console.log("Booking success:", result);
-   
-     navigate("/booking/sucesss", {
-  state: {
-    hotelId: hotelId,
-    room: room,
-    totalPrice:totalPrice,
-    checkIn:checkIn,
-    checkOut:checkOut,
-    nights:nights
-  }
-});
+      console.log("✅ Booking success:", result);
 
+      // ✅ Xóa localStorage search query nếu cần
+      localStorage.removeItem("searchQuery");
+
+      navigate("/booking/success", {
+        state: {
+          hotelId,
+          room,
+          totalPrice,
+          checkIn,
+          checkOut,
+          nights
+        }
+      });
     } catch (error) {
-      console.error("Booking failed:", error);
-
-    
-    navigate("/booking/failed", {
-      state: {
-        errorMessage: error?.message || "Đặt phòng thất bại. Vui lòng thử lại!"
-      }
-    });
+      console.error("❌ Booking failed:", error);
+      navigate("/booking/failed", {
+        state: {
+          errorMessage: error?.message || "Đặt phòng thất bại. Vui lòng thử lại!"
+        }
+      });
     }
   };
 
   return (
     <div className="w-full mx-auto px-6">
-      {/* Step bar */}
       <BookingSteps currentStep={3} />
 
       <div className="my-10 gap-8 w-3/4 mx-auto flex">
@@ -89,49 +95,55 @@ export default function BookingCheckout() {
           <div className="w-full bg-white border border-gray-200 rounded-md shadow-sm px-10 py-6 space-y-6">
             <h2 className="text-lg font-semibold">Chọn cách thanh toán</h2>
 
-            {/* Option 1 */}
+            {/* ✅ Option 1: Ví TravelBuddy */}
             <div className="space-y-2">
               <label className="flex items-start space-x-3 cursor-pointer">
                 <input
                   type="radio"
                   name="payment"
-                  defaultChecked
+                  checked={paymentMethod === 2}
+                  onChange={() => setPaymentMethod(2)}
                   className="mt-1 h-5 w-5 text-blue-600 focus:ring-blue-500"
                 />
                 <div>
                   <div className="font-medium">
-                    Thanh toán vào ngày <span className="font-semibold">29 Tháng 9, 2025</span>
+                    Thanh toán ngay bằng tài khoản{" "}
+                    <span className="font-semibold text-lg text-blue-600">
+                      Travel Buddy
+                    </span>
                   </div>
                   <ul className="text-sm text-green-600 space-y-1 mt-1">
                     <li>✔ KHÔNG SỢ RỦI RO! Không thanh toán hôm nay</li>
                     <li>✔ Hủy miễn phí trước 30 Tháng 9, 2025</li>
                   </ul>
                   <p className="text-sm text-blue-600 hover:underline">
-                    Tiền sẽ được trực tiếp trừ vào tài khoản cá nhân trên webiste
+                    Tiền sẽ được trừ trực tiếp từ tài khoản cá nhân trên website.
                   </p>
                 </div>
               </label>
             </div>
 
-            {/* Option 2 */}
+            {/* ✅ Option 2: Thanh toán khi nhận phòng */}
             <div className="pt-4 border-t">
               <label className="flex items-start space-x-3 cursor-pointer">
                 <input
                   type="radio"
                   name="payment"
+                  checked={paymentMethod === 1}
+                  onChange={() => setPaymentMethod(1)}
                   className="mt-1 h-5 w-5 text-blue-600 focus:ring-blue-500"
                 />
                 <div>
                   <div className="font-medium">Thanh toán khi nhận phòng</div>
                   <p className="text-sm text-gray-600 mt-1">
-                    Bạn có thể chọn Thanh toán khi nhận phòng, khách sạn sẽ gọi điện trong vòng 1 tiếng.
+                    Khách sạn sẽ liên hệ xác nhận trong vòng 1 tiếng.
                   </p>
                 </div>
               </label>
             </div>
           </div>
 
-          {/* Checkbox marketing */}
+          {/* Checkbox đồng ý */}
           <div className="w-full bg-white border border-gray-200 rounded-md shadow-sm px-8 py-6 space-y-4">
             <label className="flex items-start space-x-3">
               <input
@@ -141,22 +153,26 @@ export default function BookingCheckout() {
                 className="mt-1 h-5 w-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
               />
               <span className="text-sm text-gray-700">
-               Tôi đồng ý nhận email marketing từ TravelBuddy, bao gồm khuyến mãi, đề xuất được cá nhân hóa, tặng thưởng, trải nghiệm du lịch và cập nhật về các sản phẩm và dịch vụ của TravelBuddy.
-Với việc đăng kí nhận email marketing, bạn cho phép chúng tôi đề xuất các sản phẩm, dịch vụ, ưu đãi và nội dung theo sở thích của mình bằng việc theo dõi cách bạn sử dụng TravelBuddy thông qua công nghệ theo dõi. Hủy đăng kí bất cứ lúc nào thông qua phần cài đặt tài khoản hoặc đường dẫn trong bất kỳ email marketing nào. Tham khảo chính sách bảo mật của chúng tôi.
+                Tôi đồng ý nhận email marketing từ TravelBuddy, bao gồm khuyến
+                mãi, đề xuất được cá nhân hóa, và thông tin du lịch hữu ích.
               </span>
             </label>
 
-            {/* Điều kiện */}
             <p className="text-sm text-gray-700">
-              Đặt phòng của bạn là đặt phòng trực tiếp với{" "}
-              <span className="font-semibold">Khách sạn</span> và và bằng việc hoàn tất đặt phòng này, bạn đồng ý với điều kiện đặt phòng, điều khoản chung và chính sách bảo mật.
+              Đặt phòng này đồng nghĩa với việc bạn đồng ý với{" "}
+              <span className="font-semibold">điều khoản và chính sách</span> của
+              TravelBuddy.
             </p>
 
-            {/* Nút hoàn tất đặt chỗ */}
+            {/* ✅ Nút hoàn tất */}
             <button
               disabled={!agree}
               onClick={handleBooking}
-              className={`w-full cursor-pointer flex items-center justify-center px-6 py-2 rounded-md font-semibold text-white space-x-2 transition ${agree ? "bg-blue-600 hover:bg-blue-700" : "bg-gray-400 cursor-not-allowed"}`}
+              className={`w-full flex items-center justify-center px-6 py-2 rounded-md font-semibold text-white space-x-2 transition ${
+                agree
+                  ? "bg-blue-600 hover:bg-blue-700 cursor-pointer"
+                  : "bg-gray-400 cursor-not-allowed"
+              }`}
             >
               <LockSimple size={20} weight="fill" />
               <span>Hoàn tất đặt chỗ</span>
@@ -171,7 +187,8 @@ Với việc đăng kí nhận email marketing, bạn cho phép chúng tôi đ�
             room={room}
             checkInDate={checkIn}
             checkOutDate={checkOut}
-            customerName={customerName}
+            customerFirstName={customerFirstName}
+            customerLastName={customerLastName}
             customerEmail={customerEmail}
             customerPhone={customerPhone}
             specialRequest={specialRequest}

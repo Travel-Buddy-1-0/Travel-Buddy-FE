@@ -74,7 +74,7 @@ useEffect(() => {
 
   return (
     <>
-      <header className="flex justify-between items-center px-6 border-b border-gray-300 bg-white h-16 relative">
+      <header className="flex justify-between items-center px-6 border-b border-gray-300 bg-white h-16 z-1000 relative">
         {/* Search box */}
              {/* Search box */}
       {/* Search box */}

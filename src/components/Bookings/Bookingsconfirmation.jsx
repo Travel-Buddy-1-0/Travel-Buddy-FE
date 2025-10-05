@@ -126,28 +126,7 @@ export default function Bookingsconfirmation() {
                                 />
                             </div>
                         </div>
-                        <div className="w-full bg-white border border-gray-200 rounded-md shadow-sm px-10 py-6 space-y-2">
-                            {/* Tiêu đề */}
-                            <h2 className="text-lg font-semibold">Thời gian đến của bạn</h2>
-
-                            {/* Mô tả */}
-                            <p className="text-sm text-gray-700 flex items-center">
-                                <CalendarCheck className="text-lg mr-2" />  Lễ tân 24 giờ - Luôn có trợ giúp mỗi khi bạn cần!
-                            </p>
-
-                            {/* Nhập yêu cầu */}
-                            <div className="">
-                                <div className="text-sm font-bold">Thêm thời gian đến dự kiến của bạn </div>
-                                <div className="my-2">
-                                    <select className="border-gray-400 border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 w-2/3">
-                                        <option>Chọn giờ đến</option>
-
-                                    </select>
-                                </div>
-                                <div className="text-xs"> Thời gian theo múi giờ của Việt Nam</div>
-
-                            </div>
-                        </div>
+                    
                     </div>
 
                     <div className="flex flex-col space-y-6">
@@ -156,7 +135,9 @@ export default function Bookingsconfirmation() {
                             room={room}
                             checkInDate={checkIn}
                             checkOutDate={checkOut}
-                            customerName={`${customerFirstName} ${customerLastName}`}
+                            customerFirstName={customerFirstName}
+                            customerLastName={customerLastName}
+                            
                             customerEmail={customerEmail}
                             customerPhone={customerPhone}
                             specialRequest={specialRequest}
