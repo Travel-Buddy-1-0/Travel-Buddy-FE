@@ -8,15 +8,15 @@ export async function updateUserProfile(profileData) {
     }
 
     // Chuẩn hóa dữ liệu profile (tránh undefined/null)
-    const sanitizedProfile = {
-      username: profileData.username ?? null,
-      email: profileData.email ?? null,
-      fullName: profileData.fullName ?? null,
-      phoneNumber: profileData.phoneNumber ?? null,
-      image: profileData.image ?? null,
-      dateOfBirth: profileData.dateOfBirth ?? null, // YYYY-MM-DD
-      sex: profileData.sex ?? null,
-    };
+const sanitizedProfile = {
+  username: profileData.username || null,
+  email: profileData.email || null,
+  fullName: profileData.fullName || null,
+  phoneNumber: profileData.phoneNumber || null,
+  image: profileData.image || null,
+  dateOfBirth: profileData.dateOfBirth || null, // YYYY-MM-DD
+  sex: profileData.sex || null,
+};
 
     const payload = {
       auth: {
