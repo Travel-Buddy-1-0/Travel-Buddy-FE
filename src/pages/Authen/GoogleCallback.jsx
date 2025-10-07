@@ -7,6 +7,7 @@ export default function GoogleCallback() {
   const navigate = useNavigate();
 
   useEffect(() => {
+     console.log("Current URL:", window.location.href);
     const hash = window.location.hash.substring(1);
     const params = new URLSearchParams(hash);
 
