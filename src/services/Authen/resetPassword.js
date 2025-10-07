@@ -2,7 +2,7 @@
 
 export async function resetPassword(email) {
   try {
-    const response = await fetch("https://localhost:7056/Authentication/resetpassword", {
+    const response = await fetch("https://travel-buddy-web.azurewebsites.net/Authentication/resetpassword", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

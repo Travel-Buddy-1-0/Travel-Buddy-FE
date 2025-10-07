@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { X, PaperPlaneRight } from "phosphor-react";
+import { getUnsplashPhotoById } from "../../services/Unplash/unsplashByID";
 
-const UNSPLASH_KEY = "fxcJg7TtF1KfXyjpmHNGoI6IOHkpDlnJnpAdogfn7LU";
 
 const initialComments = [
   { id: 1, user: "Alice", avatar: "https://i.pravatar.cc/40?img=1", text: "Wow, đẹp quá!" },
@@ -13,7 +13,7 @@ const hooks = [
   "Đừng bỏ lỡ chuyến đi tuyệt vời này!",
   "Khám phá ngay nơi này bằng một cú click!",
   "Click để đặt phòng và tận hưởng chuyến đi!",
-  "Điểm đến mơ ước đang chờ bạn!"
+  "Điểm đến mơ ước đang chờ bạn!",
 ];
 
 export default function PhotoDetail({ id, onClose }) {
@@ -21,51 +21,40 @@ export default function PhotoDetail({ id, onClose }) {
   const [comments, setComments] = useState(initialComments);
   const [newComment, setNewComment] = useState("");
   const [randomHook, setRandomHook] = useState("");
+  const [loading, setLoading] = useState(true); // 👈 thêm trạng thái loading
+  const [error, setError] = useState(null); // 👈 thêm trạng thái lỗi
 
   const travelPackage = JSON.parse(sessionStorage.getItem("travelPackage") || "{}");
 
+  // chọn ngẫu nhiên câu "hook"
   useEffect(() => {
     setRandomHook(hooks[Math.floor(Math.random() * hooks.length)]);
   }, []);
 
+  // fetch ảnh theo ID
   useEffect(() => {
     const fetchPhoto = async () => {
-      try {
-        const res = await fetch(`https://api.unsplash.com/photos/${id}?client_id=${UNSPLASH_KEY}`);
-        const data = await res.json();
-        setPhoto({
-          id: data.id,
-          photographer: data.user.name,
-          photographerLink: data.user.links.html,
-          src: {
-            large2x: data.urls.full,
-            regular: data.urls.regular,
-            small: data.urls.small,
-          },
-          alt: data.alt_description || "Travel Photo",
-          description: data.description || data.alt_description || "Beautiful travel photo.",
-        });
-      } catch (err) {
-        console.error("Fetch Unsplash detail error:", err);
-      }
+      setLoading(true);
+      setError(null);
+      const data = await getUnsplashPhotoById(id);
+      if (data) setPhoto(data);
+      else setError("Không tải được ảnh từ Unsplash");
+      setLoading(false);
     };
     fetchPhoto();
   }, [id]);
 
+  // thêm comment
   const handleAddComment = () => {
     if (newComment.trim() === "") return;
     setComments(prev => [
       ...prev,
-      {
-        id: Date.now(),
-        user: "You",
-        avatar: "https://i.pravatar.cc/40?img=3",
-        text: newComment.trim(),
-      },
+      { id: Date.now(), user: "You", avatar: "https://i.pravatar.cc/40?img=3", text: newComment.trim() },
     ]);
     setNewComment("");
   };
 
+  // chuyển hướng tới trang đặt phòng
   const handleBooking = () => {
     const location = encodeURIComponent(travelPackage.destination || "New York");
     const today = new Date();
@@ -75,9 +64,33 @@ export default function PhotoDetail({ id, onClose }) {
     const checkOut = checkoutDate.toISOString().split("T")[0];
     const guests = encodeURIComponent("1 adult");
 
-    const url = `http://localhost:5173/booking/hotel?location=${location}&checkIn=${checkIn}&checkOut=${checkOut}&guests=${guests}`;
+    const url = `https://travel-buddy-web.azurewebsites.net/booking/hotel?location=${location}&checkIn=${checkIn}&checkOut=${checkOut}&guests=${guests}`;
     window.location.href = url;
   };
+
+  // loading UI
+  if (loading) {
+    return (
+      <div className="fixed inset-0 flex items-center justify-center bg-black/80 text-white z-[1000]">
+        <p className="animate-pulse">Đang tải ảnh...</p>
+      </div>
+    );
+  }
+
+  // error UI
+  if (error) {
+    return (
+      <div className="fixed inset-0 flex flex-col items-center justify-center bg-black/80 text-red-400 z-[1000]">
+        <p>{error}</p>
+        <button
+          onClick={onClose}
+          className="mt-3 px-4 py-1.5 bg-gray-200 text-black rounded hover:bg-gray-300"
+        >
+          Đóng
+        </button>
+      </div>
+    );
+  }
 
   if (!photo) return null;
 
@@ -87,7 +100,7 @@ export default function PhotoDetail({ id, onClose }) {
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute top-3 right-3 p-2 rounded-full bg-gray-100 hover:bg-gray-200 z-10"
+          className="absolute top-3 cursor-pointer right-3 p-2 rounded-full bg-gray-100 hover:bg-gray-200 z-10"
         >
           <X size={24} />
         </button>
@@ -124,7 +137,7 @@ export default function PhotoDetail({ id, onClose }) {
               </div>
             </div>
 
-            {/* Title & description */}
+            {/* Description */}
             <p className="text-gray-600 text-sm mb-2">{photo.description}</p>
             <h3 className="font-semibold text-sm mb-3">{photo.alt}</h3>
 
@@ -167,26 +180,30 @@ export default function PhotoDetail({ id, onClose }) {
             </div>
           </div>
 
-          {/* Booking button + hook + arrow */}
+          {/* Booking section */}
           <div className="mt-3 flex flex-col items-center relative">
             <p className="text-gray-600 text-sm mb-2 font-semibold text-center">{randomHook}</p>
 
             <div className="relative mt-5">
               <div className="absolute -top-6 left-1/2 -translate-x-1/2 animate-bounce">
-                <svg className="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg
+                  className="w-6 h-6 text-blue-500"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
               </div>
 
               <button
                 onClick={handleBooking}
-                className="w-32 bg-blue-500 cursor-pointer text-white py-1.5 px-3  rounded-lg shadow hover:bg-blue-600 transition text-xs"
+                className="w-32 bg-blue-500 cursor-pointer text-white py-1.5 px-3 rounded-lg shadow hover:bg-blue-600 transition text-xs"
               >
                 Đặt phòng
               </button>
             </div>
           </div>
-
         </div>
       </div>
     </div>

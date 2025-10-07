@@ -1,31 +1,82 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Heart } from "phosphor-react";
+import { createFavoriteApi } from "../../services/Favorites/createFavoriteApi";
+import { getFavorites } from "../../services/Favorites/getFavorites";
+
 
 export default function HotelCard({ hotel }) {
   const navigate = useNavigate();
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  // xử lý image
-  const image = hotel.image?.replace(/^"|"$/g, ""); // loại bỏ dấu " dư
+const user = JSON.parse(localStorage.getItem("user"));
+const userId = user?.userId;
+  const targetType = "HOTEL";
 
-  
- // parse style để lấy amenities và stars
-let amenities = [];
-let stars = 0;
-try {
-  const styleObj = hotel.style ? JSON.parse(hotel.style) : null;
-  amenities = styleObj?.amenities || [];
-  stars = styleObj?.stars || 0;
-} catch (err) {
-  amenities = [];
-  stars = 0;
-}
+  // ✅ Kiểm tra xem hotel này đã được yêu thích chưa
+  useEffect(() => {
+    if (!userId) return;
+    (async () => {
+      try {
+        const result = await getFavorites(userId, targetType);
+        if (result?.data?.some((f) => f.targetId == hotel.hotelId)) {
+          setIsFavorite(true);
+        }
+      } catch (err) {
+        console.error("❌ Error loading favorites:", err);
+      }
+    })();
+  }, [hotel.hotelId, userId]);
 
-  // tính giá trung bình USD
-const usdPrice =
-  hotel.rooms && hotel.rooms.length > 0
-    ? (hotel.rooms.reduce((sum, r) => sum + r.pricePerNight, 0) / hotel.rooms.length / 26500).toFixed(2)
-    : 0;
+  // ✅ Hàm xử lý khi click tym
+  const handleFavoriteClick = async () => {
+    if (!userId) {
+      alert("Vui lòng đăng nhập để thêm vào danh sách yêu thích!");
+      return;
+    }
 
+    setLoading(true);
+    try {
+      if (!isFavorite) {
+         const hotelId = String(hotel.hotelId);
+        await createFavoriteApi(userId, targetType, hotelId);
+        setIsFavorite(true);
+      } else {
+        // TODO: Thêm API xóa sau
+        alert("Vào trang profile để xóa");
+      }
+    } catch (err) {
+      console.error("❌ Error updating favorite:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ✅ Xử lý image
+  const image = hotel.image?.replace(/^"|"$/g, "");
+
+  // ✅ Parse style
+  let amenities = [];
+  let stars = 0;
+  try {
+    const styleObj = hotel.style ? JSON.parse(hotel.style) : null;
+    amenities = styleObj?.amenities || [];
+    stars = styleObj?.stars || 0;
+  } catch {
+    amenities = [];
+    stars = 0;
+  }
+
+  // ✅ Tính giá trung bình USD
+  const usdPrice =
+    hotel.rooms && hotel.rooms.length > 0
+      ? (
+          hotel.rooms.reduce((sum, r) => sum + r.pricePerNight, 0) /
+          hotel.rooms.length /
+          26500
+        ).toFixed(2)
+      : 0;
 
   return (
     <div className="border rounded-lg px-4 py-4 border-gray-300 flex gap-4 shadow-sm bg-white">
@@ -36,9 +87,20 @@ const usdPrice =
           alt={hotel.name}
           className="rounded-md w-full h-full object-cover"
         />
-        <button className="absolute top-2 right-2 bg-white rounded-full p-2 shadow hover:scale-105">
-          <i className="fa-regular fa-heart text-gray-600"></i>
-        </button>
+       <button
+  onClick={handleFavoriteClick}
+  disabled={loading}
+  className={`absolute top-2 right-2 p-2 rounded-full shadow transition cursor-pointer ${
+    isFavorite ? "bg-rose-500" : "bg-white hover:bg-gray-100"
+  }`}
+>
+  <Heart
+    size={22}
+    weight={isFavorite ? "fill" : "regular"}
+    className={isFavorite ? "text-white" : "text-gray-600"}
+  />
+</button>
+
       </div>
 
       {/* Nội dung */}
@@ -53,7 +115,9 @@ const usdPrice =
 
           <div className="text-sm text-blue-600 mt-3 flex items-center gap-2">
             <span>{hotel.address}</span>
-            <button className="underline hover:text-blue-800">Xem trên bản đồ</button>
+            <button className="underline hover:text-blue-800">
+              Xem trên bản đồ
+            </button>
           </div>
 
           <div className="flex flex-wrap gap-2 my-4">
@@ -83,7 +147,6 @@ const usdPrice =
             <span className="bg-blue-900 text-white px-2 py-1 rounded font-bold">
               {(hotel.averageRating * 2).toFixed(1)}
             </span>
-            
           </div>
           <div className="text-sm text-gray-500">{hotel.reviews} đánh giá</div>
         </div>
@@ -93,7 +156,7 @@ const usdPrice =
               US${hotel.oldPrice}
             </div>
           )}
-         <div className="text-xl font-bold text-red-600">US${usdPrice}</div>
+          <div className="text-xl font-bold text-red-600">US${usdPrice}</div>
 
           <div className="text-xs text-gray-500">Đã bao gồm thuế và phí</div>
           <button

@@ -4,6 +4,9 @@ import { Heart, Star } from "phosphor-react";
 import { fetchSuggestions } from "../../services/Bookings/HotelSuggestion";
 import { fetchTopHotels } from "../../services/Bookings/TopHotel";
 import { useNavigate } from "react-router-dom";
+import { createFavoriteApi } from "../../services/Favorites/createFavoriteApi";
+import { getFavorites } from "../../services/Favorites/getFavorites";
+import { useRef } from "react";
 
 export default function DefaultContentSection() {
   const navigate = useNavigate();
@@ -20,6 +23,12 @@ export default function DefaultContentSection() {
     { name: "Đà Lạt", img: "https://tiki.vn/blog/wp-content/uploads/2023/02/san-may-da-lat.jpg", stays: "2.100 chỗ ở" },
   ]);
 
+  const [likedHotels, setLikedHotels] = useState({});
+const likeTimers = useRef({});
+const user = JSON.parse(localStorage.getItem("user"));
+const userId = user?.userId;
+
+
   const [suggestionHotels, setSuggestionHotels] = useState([]);
   const [topHotels, setTopHotels] = useState([]);
 
@@ -34,11 +43,17 @@ export default function DefaultContentSection() {
   const randomReviewCount = () =>
     Math.floor(Math.random() * (500 - 100 + 1)) + 100;
 
-  useEffect(() => {
-    const cleanUrl = (url) => url.replace(/^"+|"+$/g, "");
+useEffect(() => {
+  const cleanUrl = (url) => url.replace(/^"+|"+$/g, "");
 
-    const loadData = async () => {
-      const suggestions = await fetchSuggestions(4);
+  const loadData = async () => {
+    try {
+      const [suggestions, tops, favs] = await Promise.all([
+        fetchSuggestions(4),
+        fetchTopHotels(4),
+        getFavorites(userId, "HOTEL"),
+      ]);
+
       setSuggestionHotels(
         suggestions.map((h) => ({
           ...h,
@@ -47,7 +62,6 @@ export default function DefaultContentSection() {
         }))
       );
 
-      const tops = await fetchTopHotels(4);
       setTopHotels(
         tops.map((h) => ({
           ...h,
@@ -56,10 +70,53 @@ export default function DefaultContentSection() {
           reviewCount: randomReviewCount(),
         }))
       );
-    };
 
-    loadData();
-  }, []);
+      // Đánh dấu những hotel đã tym
+      if (favs && Array.isArray(favs.data)) {
+        const favMap = {};
+        favs.data.forEach((f) => {
+          favMap[f.targetId] = true;
+        });
+        setLikedHotels(favMap);
+      }
+    } catch (err) {
+      console.error("❌ Error loading hotels or favorites:", err);
+    }
+  };
+
+  loadData();
+}, [userId]);
+
+const toggleLikeHotel = (hotelId) => {
+  hotelId = String(hotelId);
+  setLikedHotels((prev) => {
+    const isLiked = !prev[hotelId];
+
+    if (isLiked) {
+      if (likeTimers.current[hotelId]) return prev;
+
+      const timer = setTimeout(async () => {
+        try {
+          await createFavoriteApi(userId, "HOTEL", hotelId);
+          console.log(`✅ Hotel ${hotelId} added to favorites`);
+        } catch (err) {
+          console.error("❌ Error creating hotel favorite:", err);
+        }
+        delete likeTimers.current[hotelId];
+      }, 5000);
+
+      likeTimers.current[hotelId] = timer;
+    } else {
+      if (likeTimers.current[hotelId]) {
+        clearTimeout(likeTimers.current[hotelId]);
+        delete likeTimers.current[hotelId];
+        console.log(`🛑 Cancel hotel favorite for ${hotelId}`);
+      }
+    }
+
+    return { ...prev, [hotelId]: isLiked };
+  });
+};
 
   const settings = {
     infinite: true,
@@ -133,9 +190,21 @@ export default function DefaultContentSection() {
                   alt={hotel.name}
                   className="object-cover w-full h-full rounded-l-3xl"
                 />
-                <div className="absolute top-3 left-2 bg-white px-2 py-1 rounded-full shadow cursor-pointer">
-                  <Heart size={16} weight="regular" className="text-gray-600" />
-                </div>
+                <button
+  onClick={(e) => {
+    e.stopPropagation();
+    toggleLikeHotel(hotel.hotelId);
+  }}
+  className={`absolute  cursor-pointer top-3 left-2 p-2 rounded-full shadow transition ${
+    likedHotels[hotel.hotelId] ? "bg-rose-500" : "bg-white hover:bg-gray-100"
+  }`}
+>
+  <Heart
+    size={16}
+    weight={likedHotels[hotel.hotelId] ? "fill" : "regular"}
+    className={likedHotels[hotel.hotelId] ? "text-white" : "text-gray-600"}
+  />
+</button>
               </div>
 
               <div className="p-4 border-l w-2/3 rounded-r-3xl flex flex-col justify-between">
@@ -163,7 +232,7 @@ export default function DefaultContentSection() {
                   </span>
                   <button
                     onClick={() => navigate(`/booking/hotel/${hotel.hotelId}`)}
-                    className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-full text-sm font-medium cursor-pointer"
+                    className="px-4 py-2  bg-gray-100 hover:bg-gray-200 rounded-full text-sm font-medium cursor-pointer"
                   >
                     Book Now
                   </button>
@@ -195,9 +264,22 @@ export default function DefaultContentSection() {
                   alt={hotel.name}
                   className="object-cover w-full h-48 rounded-t-3xl"
                 />
-                <div className="absolute top-3 left-3 bg-white px-2 py-1 rounded-full shadow cursor-pointer">
-                  <Heart size={16} weight="regular" className="text-gray-600" />
-                </div>
+               <button
+  onClick={(e) => {
+    e.stopPropagation();
+    toggleLikeHotel(hotel.hotelId);
+  }}
+  className={`absolute  cursor-pointer top-3 left-2 p-2 rounded-full shadow transition ${
+    likedHotels[hotel.hotelId] ? "bg-rose-500" : "bg-white hover:bg-gray-100"
+  }`}
+>
+  <Heart
+    size={16}
+    weight={likedHotels[hotel.hotelId] ? "fill" : "regular"}
+    className={likedHotels[hotel.hotelId] ? "text-white" : "text-gray-600"}
+  />
+</button>
+
               </div>
               <div className="p-4 flex flex-col justify-between flex-1">
                 <div>
