@@ -7,18 +7,18 @@ export async function updateUserProfile(profileData) {
       throw new Error("Tokens not found, please login again");
     }
 
-    // Sanitize để tránh undefined/null
+    // Chuẩn hóa dữ liệu profile (tránh undefined/null)
     const sanitizedProfile = {
-      username: profileData.username ?? "",
-      email: profileData.email ?? "",
-      fullName: profileData.fullName ?? "",
-      phoneNumber: profileData.phoneNumber ?? "",
-      image: profileData.image ?? "",
-      dateOfBirth: profileData.dateOfBirth ?? "",
-      sex: profileData.sex ?? "",
+      username: profileData.username ?? null,
+      email: profileData.email ?? null,
+      fullName: profileData.fullName ?? null,
+      phoneNumber: profileData.phoneNumber ?? null,
+      image: profileData.image ?? null,
+      dateOfBirth: profileData.dateOfBirth ?? null, // YYYY-MM-DD
+      sex: profileData.sex ?? null,
     };
 
-    const updateData = {
+    const payload = {
       auth: {
         accessToken,
         refreshToken,
@@ -32,9 +32,8 @@ export async function updateUserProfile(profileData) {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${accessToken}`,
         },
-        body: JSON.stringify(updateData),
+        body: JSON.stringify(payload),
       }
     );
 
@@ -42,7 +41,9 @@ export async function updateUserProfile(profileData) {
       let errorMessage = `Failed to update user profile (Status ${response.status})`;
       try {
         const errorData = await response.json();
-        if (errorData?.message) errorMessage = errorData.message;
+        if (errorData?.title || errorData?.message) {
+          errorMessage = errorData.title ?? errorData.message;
+        }
       } catch {
         console.warn("No JSON in response body for error");
       }
@@ -51,8 +52,8 @@ export async function updateUserProfile(profileData) {
 
     const data = await response.json();
 
-    // Cập nhật token mới nếu backend trả về
-    if (data?.auth) {
+    // Nếu backend trả về auth mới, cập nhật localStorage
+    if (data?.auth?.accessToken && data?.auth?.refreshToken) {
       localStorage.setItem("accessToken", data.auth.accessToken);
       localStorage.setItem("refreshToken", data.auth.refreshToken);
     }
