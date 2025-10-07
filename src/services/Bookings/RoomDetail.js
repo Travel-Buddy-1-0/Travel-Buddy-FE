@@ -4,7 +4,7 @@ export async function getRoomDetail(roomId) {
       throw new Error("roomId is required");
     }
 
-    const response = await fetch(`https://localhost:7056/api/Room/${roomId}`, {
+    const response = await fetch(`https://travel-buddy-web.azurewebsites.net/api/Room/${roomId}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

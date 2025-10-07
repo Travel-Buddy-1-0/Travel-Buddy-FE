@@ -5,7 +5,7 @@ export async function cancelBooking(bookingId) {
 
     // status = 0 => hủy phòng
     const response = await fetch(
-      `https://localhost:7056/Hotel/change-status-booking?bookingId=${bookingId}`,
+      `https://travel-buddy-web.azurewebsites.net/Hotel/change-status-booking?bookingId=${bookingId}`,
       {
         method: "GET",
         headers: {

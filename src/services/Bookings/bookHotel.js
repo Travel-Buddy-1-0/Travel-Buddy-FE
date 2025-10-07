@@ -7,7 +7,7 @@ export async function bookingHotel(bookingData) {
     const userId = user.userId;
 
     // Gọi API
-    const response = await fetch(`https://localhost:7056/Hotel/book?userId=${userId}`, {
+    const response = await fetch(`https://travel-buddy-web.azurewebsites.net/Hotel/book?userId=${userId}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

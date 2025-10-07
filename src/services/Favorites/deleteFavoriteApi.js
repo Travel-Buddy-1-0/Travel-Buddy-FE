@@ -2,7 +2,7 @@ export async function deleteFavoriteApi(favoriteId) {
   if (!favoriteId) throw new Error("Favorite ID is required");
 
   try {
-    const res = await fetch(`https://localhost:7056/api/Favorite/${favoriteId}`, {
+    const res = await fetch(`https://travel-buddy-web.azurewebsites.net/api/Favorite/${favoriteId}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",

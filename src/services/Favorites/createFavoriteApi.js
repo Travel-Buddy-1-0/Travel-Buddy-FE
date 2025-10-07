@@ -4,7 +4,7 @@ export async function createFavoriteApi(userId, targetType, targetId) {
     const accessToken = localStorage.getItem("accessToken");
     if (!accessToken) throw new Error("Access token not found, please login.");
 
-    const response = await fetch("https://localhost:7056/api/Favorite", {
+    const response = await fetch("https://travel-buddy-web.azurewebsites.net/api/Favorite", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

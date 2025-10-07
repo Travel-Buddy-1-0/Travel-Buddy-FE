@@ -10,7 +10,7 @@ export async function getBookingHistory(limit = 20, offset = 0) {
  
     // 🔹 Gọi API
     const response = await fetch(
-      `https://localhost:7056/Hotel/bookings/history?userId=${userId}&limit=${limit}&offset=${offset}`,
+      `https://travel-buddy-web.azurewebsites.net/Hotel/bookings/history?userId=${userId}&limit=${limit}&offset=${offset}`,
       {
         method: "GET",
         headers: {

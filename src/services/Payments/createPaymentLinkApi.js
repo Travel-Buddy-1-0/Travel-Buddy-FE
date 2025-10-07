@@ -3,7 +3,7 @@ export async function createPaymentLinkApi({ description, amount }) {
     const user = JSON.parse(localStorage.getItem("user"));
     if (!user?.userId) throw new Error("User not logged in");
 
-    const response = await fetch("https://localhost:7056/api/Payment/create-link", {
+    const response = await fetch("https://travel-buddy-web.azurewebsites.net/api/Payment/create-link", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

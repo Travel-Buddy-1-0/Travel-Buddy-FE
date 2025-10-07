@@ -5,7 +5,7 @@
     });
 
     try {
-      const res = await fetch(`https://localhost:7056/api/Favorite?${params.toString()}`, {
+      const res = await fetch(`https://travel-buddy-web.azurewebsites.net/api/Favorite?${params.toString()}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
