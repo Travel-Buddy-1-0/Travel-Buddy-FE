@@ -27,6 +27,8 @@ import MyCard from "./components/AccountMenu/MyCard";
 import MySaves from "./components/AccountMenu/MySaves";
 import BookingFailed from "./components/Bookings/BookingsFaild";
 import ErrorPage from "./components/Layout/ErrorPage";
+import PaymentSuccess from "./components/Payments/PaymentSuccess";
+import PaymentCancel from "./components/Payments/PaymentCancel";
 
 
 
@@ -45,6 +47,8 @@ import ErrorPage from "./components/Layout/ErrorPage";
       <Route path="booking/confirmation" element={<Bookingsconfirmation />} />
       <Route path="booking/checkout" element={<BookingCheckout />} />
       <Route path="booking/success" element={<BookingSuccess />} />
+       <Route path="/payment-success" element={<PaymentSuccess />} />
+        <Route path="/payment-cancel" element={<PaymentCancel />} />
       <Route path="booking/failed" element={<BookingFailed/>}></Route>
    <Route path="travel/posts/:id" element={<Home />} />
       <Route path="user" element={<AccountMenu />}>

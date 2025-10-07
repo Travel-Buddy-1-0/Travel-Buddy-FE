@@ -5,9 +5,10 @@ import {
   Clock, CreditCard, SignOut, Plus,
 } from "phosphor-react";
 import BuildPackageSection from "./BuildPackageSection";
-import DepositModal from "./DepositModal";
+
 import { getUserApi } from "../../services/Authen/getUserApi";
 import { useNavigate } from "react-router-dom";
+import DepositModal from "../Payments/DepositModal";
 export default function HeaderTop() {
   const [showDeposit, setShowDeposit] = useState(false);
   const [showBuildPackage, setShowBuildPackage] = useState(false);

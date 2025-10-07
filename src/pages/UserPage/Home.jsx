@@ -1,15 +1,16 @@
-// Home.jsx
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Masonry from "react-masonry-css";
 import * as Icons from "phosphor-react";
 import { useNavigate, useParams } from "react-router-dom";
 import PhotoDetail from "./ProductDetails";
+import { fetchUnsplash } from "../../services/Unplash/unsplashService";
+import { createFavoriteApi } from "../../services/Favorites/createFavoriteApi";
+import { getFavorites } from "../../services/Favorites/getFavorites";
+
 
 const breakpointColumnsObj = { default: 5, 1100: 3, 700: 2, 500: 1 };
-const UNSPLASH_KEY = "fxcJg7TtF1KfXyjpmHNGoI6IOHkpDlnJnpAdogfn7LU";
-const PER_PAGE = 10;
 
-// Chuyển tiếng Việt -> không dấu + viết liền
+// 🔹 Hàm bỏ dấu tiếng Việt
 const removeVietnameseTones = (str) => {
   if (!str) return "";
   str = str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
@@ -25,30 +26,29 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
-  const { id } = useParams(); // lấy id từ URL
+  const { id } = useParams();
+  const likeTimers = useRef({});
 
+  // 👇 Lấy userId từ localStorage
+  const user = JSON.parse(localStorage.getItem("user"));
+  const userId = user?.userId;
 
-  // 🔹 Lấy travelPackage từ sessionStorage
-    const savedPackage = sessionStorage.getItem("travelPackage");
+  // 🔹 Lấy gói du lịch đã lưu
+  const savedPackage = sessionStorage.getItem("travelPackage");
   let initialQuery = "travel";
   let cityQuery = "";
   let userActivities = [];
 
   if (savedPackage) {
     const pkg = JSON.parse(savedPackage);
-
-    // Lấy city + query
     const destination = pkg.destination || "";
     const nameOnly = destination.replace(/^(Tỉnh|Thành phố)\s+/i, "");
-    const cleanCity = removeVietnameseTones(nameOnly);  
+    const cleanCity = removeVietnameseTones(nameOnly);
     cityQuery = cleanCity ? `${cleanCity} vietnam` : "";
     initialQuery = cityQuery || "travel";
-
-    // Lấy user activities
     userActivities = pkg.activities || [];
   }
 
-  // Map activities -> icon + query
   const activityTopics = userActivities.map((act) => {
     const Icon = Icons[act.iconName] || Icons.Compass;
     return {
@@ -58,7 +58,6 @@ export default function Home() {
     };
   });
 
-  // Thêm Explore icon đầu tiên
   activityTopics.unshift({
     name: "Explore",
     query: cityQuery || "travel",
@@ -67,63 +66,99 @@ export default function Home() {
 
   const [query, setQuery] = useState(initialQuery);
 
-  // 🔹 Fetch Unsplash
-  const fetchUnsplash = async (pageToFetch, q) => {
-    try {
-      setLoading(true);
-      const res = await fetch(
-        `https://api.unsplash.com/search/photos?query=${q}&per_page=${PER_PAGE}&page=${pageToFetch}&client_id=${UNSPLASH_KEY}`
-      );
-      const data = await res.json();
-
-      const mapped = data.results.map((photo) => ({
-        id: photo.id,
-        title: photo.user.name || "Travel Photo",
-        description: photo.alt_description || "Travel image",
-        image: photo.urls.regular,
-      }));
-
-      setItems((prev) => {
-        const merged = [...prev, ...mapped];
-        return Array.from(new Map(merged.map((p) => [p.id, p])).values());
-      });
-    } catch (err) {
-      console.error("Fetch Unsplash Error:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Reset items khi query thay đổi
+  // 🔹 Lấy ảnh Unsplash
   useEffect(() => {
-    setItems([]);
-    setPage(1);
-    fetchUnsplash(1, query);
+    const load = async () => {
+      setLoading(true);
+      const results = await fetchUnsplash(1, query);
+      setItems(results);
+      setPage(1);
+      setLoading(false);
+    };
+    load();
   }, [query]);
 
-  // Toggle like
-  const toggleLike = (id) => {
-    setLikedItems((prev) => ({ ...prev, [id]: !prev[id] }));
-  };
-
-  // Scroll load more
+  // 🔹 Scroll load thêm
   useEffect(() => {
-    const handleScroll = () => {
-      if (
-        window.innerHeight + window.scrollY >=
-        document.body.scrollHeight - 100
-      ) {
-        fetchUnsplash(page + 1, query);
+    const handleScroll = async () => {
+      if (window.innerHeight + window.scrollY >= document.body.scrollHeight - 100) {
+        setLoading(true);
+        const results = await fetchUnsplash(page + 1, query);
+        setItems((prev) => {
+          const merged = [...prev, ...results];
+          return Array.from(new Map(merged.map((p) => [p.id, p])).values());
+        });
         setPage((prev) => prev + 1);
+        setLoading(false);
       }
     };
+
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, [page, query]);
 
+  // 🩷 Lấy danh sách bài đã tym
+  useEffect(() => {
+    const fetchFavorites = async () => {
+      if (!userId) return;
+      try {
+        const result = await getFavorites(userId, "POST");
+        if (result && Array.isArray(result.data)) {
+          const likedMap = {};
+          result.data.forEach((fav) => {
+            likedMap[String(fav.targetId)] = true;
+          });
+          setLikedItems(likedMap);
+          console.log("❤️ Loaded favorites:", likedMap);
+        }
+      } catch (err) {
+        console.error("❌ Error loading favorites:", err);
+      }
+    };
+    fetchFavorites();
+  }, [userId]);
+
+  // 🩷 Toggle like có delay 8s mới gọi API
+  const toggleLike = (itemId) => {
+    itemId = String(itemId);
+    setLikedItems((prev) => {
+      const isLiked = !prev[itemId];
+
+      if (isLiked) {
+        // Nếu đang có timer → bỏ qua
+        if (likeTimers.current[itemId]) {
+          console.log(`⏳ Timer already running for ${itemId}`);
+          return prev;
+        }
+
+        // Sau 8s mới gọi API lưu tym
+        const timer = setTimeout(async () => {
+          try {
+            await createFavoriteApi(userId, "POST", itemId);
+            console.log(`✅ Favorite saved for ${itemId}`);
+          } catch (err) {
+            console.error("❌ Error creating favorite:", err);
+          }
+          delete likeTimers.current[itemId];
+        }, 8000);
+
+        likeTimers.current[itemId] = timer;
+      } else {
+        // Nếu bỏ tym trước khi hết 8s → huỷ
+        if (likeTimers.current[itemId]) {
+          clearTimeout(likeTimers.current[itemId]);
+          delete likeTimers.current[itemId];
+          console.log(`🛑 Cancel favorite for ${itemId}`);
+        }
+      }
+
+      return { ...prev, [itemId]: isLiked };
+    });
+  };
+
   return (
     <div className="px-4 py-6 relative">
-      {/* 🔹 Filter buttons (Explore + user activities) */}
+      {/* Filter Buttons */}
       {activityTopics.length > 0 && (
         <div className="fixed bottom-0 left-0 right-0 w-full flex justify-center space-x-4 mb-6 z-50">
           {activityTopics.map((topic, idx) => {
@@ -147,7 +182,7 @@ export default function Home() {
         </div>
       )}
 
-      {/* 🔹 Masonry Grid */}
+      {/* Masonry Grid */}
       <Masonry
         breakpointCols={breakpointColumnsObj}
         className="my-masonry-grid"
@@ -166,7 +201,9 @@ export default function Home() {
                 toggleLike(item.id);
               }}
               className={`absolute top-3 right-2 p-2 rounded-xl transition cursor-pointer ${
-                likedItems[item.id] ? "bg-rose-500" : "hover:bg-gray-200 bg-white"
+                likedItems[item.id]
+                  ? "bg-rose-500"
+                  : "hover:bg-gray-200 bg-white"
               }`}
             >
               <Icons.Heart
@@ -185,7 +222,7 @@ export default function Home() {
           </div>
         ))}
 
-        {/* 🔹 Skeleton while loading */}
+        {/* Skeleton */}
         {loading &&
           Array.from({ length: 6 }).map((_, idx) => (
             <div
@@ -197,7 +234,7 @@ export default function Home() {
           ))}
       </Masonry>
 
-      {/* 🔹 Overlay Detail */}
+      {/* Overlay chi tiết ảnh */}
       {id && <PhotoDetail id={id} onClose={() => navigate("/")} />}
     </div>
   );
