@@ -47,8 +47,12 @@ import PaymentCancel from "./components/Payments/PaymentCancel";
       <Route path="booking/confirmation" element={<Bookingsconfirmation />} />
       <Route path="booking/checkout" element={<BookingCheckout />} />
       <Route path="booking/success" element={<BookingSuccess />} />
+
+
        <Route path="/payment-success" element={<PaymentSuccess />} />
         <Route path="/payment-cancel" element={<PaymentCancel />} />
+
+        
       <Route path="booking/failed" element={<BookingFailed/>}></Route>
    <Route path="travel/posts/:id" element={<Home />} />
       <Route path="user" element={<AccountMenu />}>
