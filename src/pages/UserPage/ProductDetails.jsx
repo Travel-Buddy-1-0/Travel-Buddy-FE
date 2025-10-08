@@ -55,18 +55,26 @@ export default function PhotoDetail({ id, onClose }) {
   };
 
   // chuyển hướng tới trang đặt phòng
-  const handleBooking = () => {
-    const location = encodeURIComponent(travelPackage.destination || "New York");
-    const today = new Date();
-    const checkIn = today.toISOString().split("T")[0];
-    const checkoutDate = new Date(today);
-    checkoutDate.setDate(today.getDate() + 2);
-    const checkOut = checkoutDate.toISOString().split("T")[0];
-    const guests = encodeURIComponent("1 adult");
+const handleBooking = () => {
+  // Lấy searchQuery từ localStorage
+  const storedQuery = localStorage.getItem("searchQuery")?.trim();
 
-    const url = `https://travel-buddy-fe.vercel.app/booking/hotel?location=${location}&checkIn=${checkIn}&checkOut=${checkOut}&guests=${guests}`;
-    window.location.href = url;
-  };
+  // Ưu tiên searchQuery, nếu không có thì dùng travelPackage.destination
+  const location = encodeURIComponent(storedQuery || travelPackage.destination || "New York");
+
+  const today = new Date();
+  const checkIn = today.toISOString().split("T")[0];
+
+  const checkoutDate = new Date(today);
+  checkoutDate.setDate(today.getDate() + 2);
+  const checkOut = checkoutDate.toISOString().split("T")[0];
+
+  const guests = encodeURIComponent("1 adult");
+
+  const url = `https://travel-buddy-fe.vercel.app/booking/hotel?location=${location}&checkIn=${checkIn}&checkOut=${checkOut}&guests=${guests}`;
+  window.location.href = url;
+};
+
 
   // loading UI
   if (loading) {
