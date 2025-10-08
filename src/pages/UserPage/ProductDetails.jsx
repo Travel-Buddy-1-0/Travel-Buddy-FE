@@ -64,7 +64,7 @@ export default function PhotoDetail({ id, onClose }) {
     const checkOut = checkoutDate.toISOString().split("T")[0];
     const guests = encodeURIComponent("1 adult");
 
-    const url = `https://travel-buddy-web.azurewebsites.net/booking/hotel?location=${location}&checkIn=${checkIn}&checkOut=${checkOut}&guests=${guests}`;
+    const url = `https://travel-buddy-fe.vercel.app/booking/hotel?location=${location}&checkIn=${checkIn}&checkOut=${checkOut}&guests=${guests}`;
     window.location.href = url;
   };
 
