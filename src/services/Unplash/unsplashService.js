@@ -1,6 +1,6 @@
 // src/api/unsplashApi.js
 const UNSPLASH_KEY = "fxcJg7TtF1KfXyjpmHNGoI6IOHkpDlnJnpAdogfn7LU";
-const PER_PAGE = 10;
+const PER_PAGE = 12;
 
 /**
  * Fetch ảnh từ Unsplash API

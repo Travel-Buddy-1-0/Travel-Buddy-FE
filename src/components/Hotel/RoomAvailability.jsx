@@ -6,8 +6,23 @@ export default function RoomAvailability({ rooms, hotelId }) {
   const navigate = useNavigate();
 
   // State cho ngày check-in / check-out
-  const [userCheckIn, setUserCheckIn] = useState("2025-09-25");
-  const [userCheckOut, setUserCheckOut] = useState("2025-10-15");
+const today = new Date();
+const yyyy = today.getFullYear();
+const mm = String(today.getMonth() + 1).padStart(2, "0");
+const dd = String(today.getDate()).padStart(2, "0");
+const todayStr = `${yyyy}-${mm}-${dd}`;
+
+
+  const tomorrow = new Date(today);
+tomorrow.setDate(today.getDate() + 1);
+const yyyy2 = tomorrow.getFullYear();
+const mm2 = String(tomorrow.getMonth() + 1).padStart(2, "0");
+const dd2 = String(tomorrow.getDate()).padStart(2, "0");
+const tomorrowStr = `${yyyy2}-${mm2}-${dd2}`;
+
+
+const [userCheckIn, setUserCheckIn] = useState(todayStr);
+const [userCheckOut, setUserCheckOut] = useState(tomorrowStr);
 
   // State cho filter số khách
   const [filterGuests, setFilterGuests] = useState(null);

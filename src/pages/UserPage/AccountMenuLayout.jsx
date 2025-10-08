@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { Outlet, NavLink, useNavigate } from "react-router-dom";
 import {
   CreditCard,
@@ -11,6 +12,14 @@ import {
 
 export const AccountMenu = ({ setUser }) => {
   const navigate = useNavigate();
+  const [user, setLocalUser] = useState(null);
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setLocalUser(JSON.parse(storedUser));
+    }
+  }, []);
 
   const linkClass = ({ isActive }) =>
     `flex items-center space-x-2 px-2 py-2 rounded-md cursor-pointer
@@ -19,6 +28,7 @@ export const AccountMenu = ({ setUser }) => {
   const handleLogout = () => {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
+    localStorage.removeItem("user");
     setUser?.(null); // nếu truyền setUser từ context hoặc parent
     navigate("/login");
   };
@@ -29,23 +39,33 @@ export const AccountMenu = ({ setUser }) => {
       <div className="mt-4 w-1/4 p-4 bg-white rounded-lg m-4 h-fit shadow-lg border border-gray-200">
         {/* User info */}
         <div className="flex items-center space-x-3 border-b border-gray-200 pb-4">
-          <div className="h-12 w-12 flex items-center justify-center rounded-full bg-gray-300 font-bold text-lg text-gray-700">
-            HQ
-          </div>
-          <div>
-            <div className="font-semibold text-gray-800">
-              Ho Quoc Hung (K17 DN)
+          {user?.avatarUrl ? (
+            <img
+              src={user.avatarUrl}
+              alt={user.name}
+              className="h-12 w-12 rounded-full object-cover"
+            />
+          ) : (
+            <div className="h-12 w-12 flex items-center justify-center rounded-full bg-gray-300 font-bold text-lg text-gray-700">
+              {user?.email
+                ? user.email
+                    .split(" ")
+                    .map((n) => n[0])
+                    .join("")
+                    .toUpperCase()
+                : "U"}
             </div>
-            <div className="text-sm text-gray-500">Google</div>
+          )}
+          <div>
+            <div className="font-semibold text-gray-800">{user?.email || "Unknown User"}</div>
+            <div className="text-sm text-gray-500">{user?.type || "Google"}</div>
           </div>
         </div>
 
         {/* Loyalty badge */}
-      <div className="bg-gradient-to-r from-green-400 to-green-500 text-white text-sm font-medium px-3 py-2 rounded-md mt-3">
-  🌱 You’re a <span className="font-bold">Travel Explorer</span>
-</div>
-
-
+        <div className="bg-gradient-to-r from-green-400 to-green-500 text-white text-sm font-medium px-3 py-2 rounded-md mt-3">
+          🌱 You’re a <span className="font-bold">Travel Explorer</span>
+        </div>
 
         {/* Menu items */}
         <ul className="mt-4 text-gray-700 text-sm space-y-1">
@@ -61,7 +81,6 @@ export const AccountMenu = ({ setUser }) => {
               <span>My Booking</span>
             </NavLink>
           </li>
-        
           <li>
             <NavLink to="/user/Saved" className={linkClass}>
               <Users size={18} className="text-blue-500" />

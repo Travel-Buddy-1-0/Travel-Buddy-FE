@@ -54,7 +54,7 @@ export default function PostFavorites({ favorites }) {
       <h1 className="text-2xl font-bold mb-6">Danh sách bài viết yêu thích</h1>
 
       {/* Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2  gap-6">
         {posts.map(post => (
           <div key={post.id} className="bg-white rounded-xl justify-between shadow-md overflow-hidden transition hover:shadow-lg relative">
             <div > 
@@ -92,7 +92,7 @@ export default function PostFavorites({ favorites }) {
 
       {/* Overlay PhotoDetail */}
       {selectedId && (
-        <div className="fixed inset-0 bg-black bg-opacity-70 z-50 flex justify-center items-start pt-20">
+        <div className="fixed inset-0  bg-opacity-100 z-50 flex justify-center items-start pt-20">
           <PhotoDetail id={selectedId} onClose={() => setSelectedId(null)} />
         </div>
       )}

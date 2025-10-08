@@ -78,50 +78,51 @@ export default function BuildPackageSection() {
   };
 
   const handleSubmit = () => {
-    if (!destination) {
-      setError("⚠️ Vui lòng chọn Tỉnh/Thành phố!");
-      return;
-    }
-    if (activities.length === 0) {
-      setError("⚠️ Vui lòng chọn ít nhất 1 hoạt động!");
-      return;
-    }
+  if (!destination) {
+    setError("⚠️ Vui lòng chọn Tỉnh/Thành phố!");
+    return;
+  }
+  if (activities.length === 0) {
+    setError("⚠️ Vui lòng chọn ít nhất 1 hoạt động!");
+    return;
+  }
 
-    setError("");
-    setSuccess(true);
+  setError("");
+  setSuccess(true);
 
-    // Lấy province đầy đủ
-    const selectedProvince = provinces.find(
-      (p) => p.code === Number(destination)
-    );
+  // Lấy province đầy đủ
+  const selectedProvince = provinces.find(
+    (p) => p.code === Number(destination)
+  );
 
-    // Lấy đầy đủ activity object (name tiếng Anh + iconName)
-    const selectedActivities = activityOptions
-      .filter((act) => activities.includes(act.name))
-      .map((act) => ({
-        name: activityTranslation[act.name], // lưu tiếng Anh
-        iconName: act.icon.displayName || act.icon.name,
-      }));
+  // Lấy đầy đủ activity object (name tiếng Anh + iconName)
+  const selectedActivities = activityOptions
+    .filter((act) => activities.includes(act.name))
+    .map((act) => ({
+      name: activityTranslation[act.name], // lưu tiếng Anh
+      iconName: act.icon.displayName || act.icon.name,
+    }));
 
-    // Lưu packageData
-    const packageData = {
-      destination: selectedProvince ? selectedProvince.name : "",
-      activities: selectedActivities,
-      createdAt: new Date().toISOString(),
-    };
-
-    sessionStorage.setItem("travelPackage", JSON.stringify(packageData));
-
-    console.log(
-      "Package data đã lưu:",
-      JSON.parse(sessionStorage.getItem("travelPackage"))
-    );
-
-    setTimeout(() => {
-      setSuccess(false);
-      navigate("/");
-    }, 3000);
+  // Lưu packageData
+  const packageData = {
+    destination: selectedProvince ? selectedProvince.name : "",
+    activities: selectedActivities,
+    createdAt: new Date().toISOString(),
   };
+
+  sessionStorage.setItem("travelPackage", JSON.stringify(packageData));
+
+  console.log(
+    "Package data đã lưu:",
+    JSON.parse(sessionStorage.getItem("travelPackage"))
+  );
+
+  // Reload page sau 1s để Home load lại dữ liệu mới
+  setTimeout(() => {
+    window.location.reload();
+  }, 1000);
+};
+
 
   return (
     <section className="flex justify-center py-4 cursor-pointer">

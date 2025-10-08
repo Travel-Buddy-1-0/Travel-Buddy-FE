@@ -29,40 +29,65 @@ export default function Home() {
   const { id } = useParams();
   const likeTimers = useRef({});
 
+  // 🔹 Giá trị mặc định query: localStorage nếu có, nếu không thì "travel"
+
+
+
   // 👇 Lấy userId từ localStorage
   const user = JSON.parse(localStorage.getItem("user"));
   const userId = user?.userId;
 
   // 🔹 Lấy gói du lịch đã lưu
   const savedPackage = sessionStorage.getItem("travelPackage");
-  let initialQuery = "travel";
-  let cityQuery = "";
-  let userActivities = [];
+let initialQuery = "travel";
+let cityQuery = "";
+let userActivities = [];
 
-  if (savedPackage) {
-    const pkg = JSON.parse(savedPackage);
-    const destination = pkg.destination || "";
-    const nameOnly = destination.replace(/^(Tỉnh|Thành phố)\s+/i, "");
-    const cleanCity = removeVietnameseTones(nameOnly);
-    cityQuery = cleanCity ? `${cleanCity} vietnam` : "";
-    initialQuery = cityQuery || "travel";
-    userActivities = pkg.activities || [];
-  }
+if (savedPackage) {
+  const pkg = JSON.parse(savedPackage);
+  const destination = pkg.destination || "";
+  const nameOnly = destination.replace(/^(Tỉnh|Thành phố)\s+/i, "");
+  const cleanCity = removeVietnameseTones(nameOnly);
+  cityQuery = cleanCity ? `${cleanCity} vietnam` : "";
+  initialQuery = cityQuery || "travel";
+  userActivities = pkg.activities || [];
+}
 
-  const activityTopics = userActivities.map((act) => {
-    const Icon = Icons[act.iconName] || Icons.Compass;
-    return {
-      name: act.name,
-      query: removeVietnameseTones(act.name) + " vietnam",
-      icon: Icon,
-    };
-  });
+// Lấy searchQuery từ localStorage
+const storedQuery = localStorage.getItem("searchQuery")?.trim();
 
+// Nếu searchQuery tồn tại → chọn làm query mặc định
+if (storedQuery) {
+  initialQuery = storedQuery;
+}
+
+
+// 🔹 Khởi tạo activityTopics từ savedPackage
+const activityTopics = userActivities.map((act) => {
+  const Icon = Icons[act.iconName] || Icons.Compass;
+  return {
+    name: act.name,
+    query: removeVietnameseTones(act.name) + " vietnam",
+    icon: Icon,
+  };
+});
+
+// 🔹 Thêm "Explore" (thành phố) từ savedPackage
+activityTopics.unshift({
+  name: "Explore",
+  query: cityQuery || "travel",
+  icon: Icons.Compass,
+});
+
+// 🔹 Nếu có searchQuery → thêm button searchQuery
+if (storedQuery) {
   activityTopics.unshift({
-    name: "Explore",
-    query: cityQuery || "travel",
-    icon: Icons.Compass,
+    name: storedQuery,        // hiển thị nội dung query
+    query: storedQuery,       // dùng nguyên query khi click
+    icon: Icons.MagnifyingGlass,
   });
+}
+
 
   const [query, setQuery] = useState(initialQuery);
 
@@ -120,41 +145,35 @@ export default function Home() {
 
   // 🩷 Toggle like có delay 8s mới gọi API
   const toggleLike = (itemId) => {
-    itemId = String(itemId);
-    setLikedItems((prev) => {
-      const isLiked = !prev[itemId];
+  const key = String(itemId); // luôn string
+  setLikedItems((prev) => {
+    const isLiked = !prev[key];
 
-      if (isLiked) {
-        // Nếu đang có timer → bỏ qua
-        if (likeTimers.current[itemId]) {
-          console.log(`⏳ Timer already running for ${itemId}`);
-          return prev;
+    // Cancel timer nếu un-like trước khi 8s
+    if (!isLiked && likeTimers.current[key]) {
+      clearTimeout(likeTimers.current[key]);
+      delete likeTimers.current[key];
+      console.log(`🛑 Cancel favorite for ${key}`);
+    }
+
+    // Nếu like mới → tạo timer call API
+    if (isLiked && !likeTimers.current[key]) {
+      likeTimers.current[key] = setTimeout(async () => {
+        try {
+          await createFavoriteApi(userId, "POST", key);
+          console.log(`✅ Favorite saved for ${key}`);
+        } catch (err) {
+          console.error("❌ Error creating favorite:", err);
+        } finally {
+          delete likeTimers.current[key];
         }
+      }, 8000);
+    }
 
-        // Sau 8s mới gọi API lưu tym
-        const timer = setTimeout(async () => {
-          try {
-            await createFavoriteApi(userId, "POST", itemId);
-            console.log(`✅ Favorite saved for ${itemId}`);
-          } catch (err) {
-            console.error("❌ Error creating favorite:", err);
-          }
-          delete likeTimers.current[itemId];
-        }, 8000);
+    return { ...prev, [key]: isLiked };
+  });
+};
 
-        likeTimers.current[itemId] = timer;
-      } else {
-        // Nếu bỏ tym trước khi hết 8s → huỷ
-        if (likeTimers.current[itemId]) {
-          clearTimeout(likeTimers.current[itemId]);
-          delete likeTimers.current[itemId];
-          console.log(`🛑 Cancel favorite for ${itemId}`);
-        }
-      }
-
-      return { ...prev, [itemId]: isLiked };
-    });
-  };
 
   return (
     <div className="px-4 py-6 relative">
@@ -195,27 +214,26 @@ export default function Home() {
             onClick={() => navigate(`/travel/posts/${item.id}`)}
           >
             <img src={item.image} alt={item.title} className="w-full rounded-2xl" />
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                toggleLike(item.id);
-              }}
-              className={`absolute top-3 right-2 p-2 rounded-xl transition cursor-pointer ${
-                likedItems[item.id]
-                  ? "bg-rose-500"
-                  : "hover:bg-gray-200 bg-white"
-              }`}
-            >
-              <Icons.Heart
-                size={16}
-                weight={likedItems[item.id] ? "fill" : "regular"}
-                className={`${
-                  likedItems[item.id]
-                    ? "text-white"
-                    : "text-gray-500 hover:text-rose-500"
-                }`}
-              />
-            </button>
+        <button
+  onClick={(e) => {
+    e.stopPropagation();
+    toggleLike(item.id);
+  }}
+  className={`absolute top-3 right-2 p-2 rounded-xl transition cursor-pointer ${
+    likedItems[String(item.id)] ? "bg-rose-500" : "hover:bg-gray-200 bg-white"
+  }`}
+>
+  <Icons.Heart
+    size={16}
+    weight={likedItems[String(item.id)] ? "fill" : "regular"}
+    className={`${
+      likedItems[String(item.id)]
+        ? "text-white"
+        : "text-gray-500 hover:text-rose-500"
+    }`}
+  />
+</button>
+
             <div className="absolute text-white bottom-4 px-3">
               <h2 className="font-bold text-sm">{item.title}</h2>
             </div>
