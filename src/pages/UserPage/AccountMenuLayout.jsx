@@ -34,7 +34,7 @@ export const AccountMenu = ({ setUser }) => {
   };
 
   return (
-    <div className="flex bg-[#F9F9F9] space-x-3 w-3/4 mx-auto">
+    <div className="flex bg-[#F9F9F9] space-x-3 w-5/6 mx-auto">
       {/* Sidebar */}
       <div className="mt-4 w-1/4 p-4 bg-white rounded-lg m-4 h-fit shadow-lg border border-gray-200">
         {/* User info */}
@@ -46,7 +46,7 @@ export const AccountMenu = ({ setUser }) => {
               className="h-12 w-12 rounded-full object-cover"
             />
           ) : (
-            <div className="h-12 w-12 flex items-center justify-center rounded-full bg-gray-300 font-bold text-lg text-gray-700">
+            <div className="h-10 w-10 flex items-center justify-center rounded-full bg-gray-300 font-bold text-lg text-gray-700">
               {user?.email
                 ? user.email
                     .split(" ")
