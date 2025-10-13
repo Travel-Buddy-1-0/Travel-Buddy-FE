@@ -30,7 +30,7 @@ export default function BookingCheckout() {
 
   const user = JSON.parse(localStorage.getItem("user"));
   const userId = user?.userId;
-  console.log("UserId:", userId);
+ 
 
   const handleBooking = async () => {
     if (!userId || !room) {
@@ -60,9 +60,7 @@ export default function BookingCheckout() {
 
     try {
       const result = await bookingHotel(bookingData);
-      console.log("✅ Booking success:", result);
 
-      // ✅ Xóa localStorage search query nếu cần
       localStorage.removeItem("searchQuery");
 
       navigate("/booking/success", {

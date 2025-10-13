@@ -7,6 +7,7 @@ export async function  updatePassword(newPassword) {
     if (!accessToken) {
       throw new Error("User is not authenticated");
     }
+    console.log("");
 
     const response = await fetch("https://travel-buddy-web.azurewebsites.net/Authentication/updatepassword", {
       method: "POST",

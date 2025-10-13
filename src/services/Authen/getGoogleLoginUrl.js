@@ -6,7 +6,7 @@ export async function getGoogleLoginUrl() {
     const url = await res.text(); // backend trả về URL redirect
     return url;
   } catch (error) {
-    console.error("Google login error:", error);
+   
     throw error;
   }
 };
