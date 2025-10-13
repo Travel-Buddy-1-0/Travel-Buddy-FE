@@ -18,8 +18,7 @@ export default function Success() {
       expiresAt: params.get("expires_at"),
       expiresIn: params.get("expires_in"),
     };
-    console.log("Payload:", payload);
-
+  
     const handleConfirm = async () => {
       try {
         const result = await confirmRegisterApi(payload);

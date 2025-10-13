@@ -18,7 +18,7 @@ export async function resetPassword(email) {
     }
 
     const data = await response.json();
-     console.log(data)
+    
     return data; // "Password reset email sent"
   } catch (err) {
     console.error("Reset password error:", err);

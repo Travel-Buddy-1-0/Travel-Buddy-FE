@@ -13,7 +13,7 @@ export async function registerTraveler(email, password) {
       const errData = await response.json();
       throw new Error(errData.error || "Registration failed");
     }
-     console.log("Register response:", response);
+    
     return await response.json(); // Trả về dữ liệu session từ API
   } catch (err) {
     console.error("Register error:", err);

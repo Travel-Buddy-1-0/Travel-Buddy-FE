@@ -98,7 +98,7 @@ const toggleLikeHotel = (hotelId) => {
       const timer = setTimeout(async () => {
         try {
           await createFavoriteApi(userId, "HOTEL", hotelId);
-          console.log(`✅ Hotel ${hotelId} added to favorites`);
+        
         } catch (err) {
           console.error("❌ Error creating hotel favorite:", err);
         }
@@ -110,7 +110,7 @@ const toggleLikeHotel = (hotelId) => {
       if (likeTimers.current[hotelId]) {
         clearTimeout(likeTimers.current[hotelId]);
         delete likeTimers.current[hotelId];
-        console.log(`🛑 Cancel hotel favorite for ${hotelId}`);
+      
       }
     }
 

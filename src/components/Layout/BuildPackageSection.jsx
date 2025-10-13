@@ -112,10 +112,7 @@ export default function BuildPackageSection() {
 
   sessionStorage.setItem("travelPackage", JSON.stringify(packageData));
 
-  console.log(
-    "Package data đã lưu:",
-    JSON.parse(sessionStorage.getItem("travelPackage"))
-  );
+ 
 
   // Reload page sau 1s để Home load lại dữ liệu mới
   setTimeout(() => {

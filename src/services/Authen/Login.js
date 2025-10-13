@@ -1,7 +1,7 @@
 export async function loginApi({ email, password }) {
   try {
 
-    console.log(email+" "+password);
+    
     const response = await fetch("https://travel-buddy-web.azurewebsites.net/Authentication/login", {
       method: "POST",
       headers: {

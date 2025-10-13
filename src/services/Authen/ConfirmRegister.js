@@ -9,7 +9,7 @@ export async function confirmRegisterApi(payload) {
       expires_in: payload.expiresIn,
     };
 
-    console.log("Final body gửi BE:", body);
+
 
     const response = await fetch("https://travel-buddy-web.azurewebsites.net/Authentication/confirmRegister", {
       method: "POST",

@@ -5,9 +5,7 @@ export default function BookingSuccess() {
   const location = useLocation();
   const { hotelId, room, totalPrice, checkIn, checkOut, nights } = location.state || {};
 
-  // Debug dữ liệu
-  console.log("Booking data received:", { hotelId, room, totalPrice, checkIn, checkOut, nights });
-
+ 
   const formatDate = (dateStr) => {
     if (!dateStr) return "??/??/????";
     const date = new Date(dateStr);

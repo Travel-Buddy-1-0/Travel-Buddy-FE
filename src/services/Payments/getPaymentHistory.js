@@ -14,10 +14,10 @@ export async function  getPaymentHistory() {
     }
 
     const data = await response.json();
-    console.log("Lịch sử thanh toán:", data);
+   
     return data;
   } catch (error) {
-    console.error("Lỗi khi gọi API:", error);
+    
     return null;
   }
 }
