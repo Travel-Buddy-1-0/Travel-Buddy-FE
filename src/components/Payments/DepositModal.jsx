@@ -90,7 +90,7 @@ export default function DepositModal({ onClose }) {
             <button
               key={val}
               onClick={() => setUsd(val.toString())}
-              className={`border rounded py-1.5 text-xs ${
+              className={`border cursor-pointer rounded py-1.5 text-xs ${
                 parseFloat(usd) === val
                   ? "bg-blue-600 text-white border-blue-600"
                   : "hover:bg-gray-100"
@@ -126,7 +126,7 @@ export default function DepositModal({ onClose }) {
         <button
           onClick={handleProceed}
           disabled={loading}
-          className={`w-full py-2.5 text-white text-sm font-semibold rounded ${
+          className={`w-full py-2.5 cursor-pointer text-white text-sm font-semibold rounded ${
             loading ? "bg-gray-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
           }`}
         >

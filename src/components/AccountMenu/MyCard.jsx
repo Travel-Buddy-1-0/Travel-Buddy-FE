@@ -1,80 +1,150 @@
 import { useState, useEffect } from "react";
-import { CaretRight } from "phosphor-react";
-
-// Ví dụ data tạm thời, sau này có thể fetch từ API
-const dummyTransactions = [
-  {
-    id: 1,
-    date: "2025-09-01",
-    service: "Hotel Booking - Nha Trang",
-    amount: 1200000,
-    status: "Paid",
-  },
-  {
-    id: 2,
-    date: "2025-08-28",
-    service: "Flight Booking - Hanoi to Saigon",
-    amount: 2500000,
-    status: "Paid",
-  },
-  {
-    id: 3,
-    date: "2025-08-20",
-    service: "Restaurant Voucher",
-    amount: 450000,
-    status: "Pending",
-  },
-];
+import { MagnifyingGlass, Calendar } from "phosphor-react";
+import { getPaymentHistory } from "../../services/Payments/getPaymentHistory";
 
 export default function MyCard() {
   const [transactions, setTransactions] = useState([]);
+  const [filtered, setFiltered] = useState([]);
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [statusFilter, setStatusFilter] = useState("ALL");
+
+  const user = JSON.parse(localStorage.getItem("user"));
+  const userId = user?.userId;
 
   useEffect(() => {
-    // Thay bằng API call thực tế
-    setTransactions(dummyTransactions);
-  }, []);
+    if (!userId) return;
+    getPaymentHistory().then((data) => {
+      setTransactions(data);
+      setFiltered(data);
+    });
+  }, [userId]);
+
+  const handleSearch = () => {
+    let result = [...transactions];
+    if (startDate) result = result.filter((tx) => new Date(tx.createdAt) >= new Date(startDate));
+    if (endDate) result = result.filter((tx) => new Date(tx.createdAt) <= new Date(endDate));
+    if (statusFilter !== "ALL") result = result.filter((tx) => tx.status === statusFilter);
+    setFiltered(result);
+  };
 
   return (
-    <div className="p-4 bg-white rounded-lg shadow-md border border-gray-200">
-      <h2 className="text-xl font-semibold mb-4">Payment History</h2>
+    <div className="p-6 bg-gradient-to-br from-white via-gray-50 to-gray-100 rounded-2xl shadow-lg border border-gray-200">
+      <h2 className="text-2xl font-semibold text-gray-800 mb-5 flex items-center gap-2">
+         Lịch sử giao dịch
+      </h2>
 
-      {transactions.length === 0 ? (
-        <p className="text-gray-500">No transactions found.</p>
-      ) : (
-        <ul className="divide-y divide-gray-200">
-          {transactions.map((tx) => (
-            <li
-              key={tx.id}
-              className="flex items-center justify-between py-3 hover:bg-gray-50 rounded-md px-2 transition"
-            >
+      {/* Bộ lọc */}
+      <div className="flex justify-between flex-wrap items-end gap-4 mb-6 bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+        <div className="flex space-x-8">
               <div className="flex flex-col">
-                <span className="font-medium text-gray-800">{tx.service}</span>
-                <span className="text-sm text-gray-500">{tx.date}</span>
-              </div>
-              <div className="flex items-center space-x-4">
-                <span className="text-gray-800 font-semibold">
-                  {tx.amount.toLocaleString("vi-VN", {
-                    style: "currency",
-                    currency: "VND",
-                  })}
-                </span>
-                <span
-                  className={`px-2 py-1 text-xs rounded-full font-medium ${
-                    tx.status === "Paid"
-                      ? "bg-green-100 text-green-800"
-                      : "bg-yellow-100 text-yellow-800"
-                  }`}
+          <label className="text-sm font-medium text-gray-700 mb-1 flex items-center gap-1">
+            <Calendar size={16} /> Thời gian bắt đầu
+          </label>
+          <input
+            type="date"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+            className="border border-gray-300 rounded-md px-4 py-2 text-sm focus:ring-2 focus:ring-blue-400 focus:border-blue-400 outline-none"
+          />
+        </div>
+
+        <div className="flex flex-col">
+          <label className="text-sm font-medium text-gray-700 mb-1 flex items-center gap-1">
+            <Calendar size={16} /> Thời gian kết thúc
+          </label>
+          <input
+            type="date"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+            className="border border-gray-300 rounded-md px-4 py-2 text-sm focus:ring-2 focus:ring-blue-400 focus:border-blue-400 outline-none"
+          />
+        </div>
+
+        <div className="flex flex-col">
+          <label className="text-sm font-medium text-gray-700 mb-1">Trạng thái</label>
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="border border-gray-300 rounded-md px-4 py-2 text-sm focus:ring-2 focus:ring-blue-400 focus:border-blue-400 outline-none"
+          >
+            <option value="ALL">Tất cả</option>
+            <option value="PAID">Thành công</option>
+            <option value="PENDING">Đang chờ</option>
+          </select>
+        </div>
+        </div>
+    
+
+        <button
+          onClick={handleSearch}
+          className="flex cursor-pointer items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-lg shadow transition-all"
+        >
+          <MagnifyingGlass size={18} />
+          Tìm kiếm
+        </button>
+      </div>
+
+      {/* Bảng dữ liệu */}
+      <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white shadow-sm">
+        <table className="min-w-full text-sm text-gray-700">
+          <thead className="bg-gray-100 text-gray-700 font-semibold">
+            <tr>
+              <th className="px-4 py-3 text-left">Thời gian đăng ký</th>
+              <th className="px-4 py-3 text-left">Phương thức</th>
+              <th className="px-4 py-3 text-right">Số tiền</th>
+              <th className="px-4 py-3 text-left">Mã giao dịch</th>
+              <th className="px-4 py-3 text-left">Ghi chú</th>
+              <th className="px-4 py-3 text-center">Trạng thái</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filtered.length === 0 ? (
+              <tr>
+                <td colSpan="6" className="text-center py-6 text-gray-500 italic">
+                  Không có giao dịch nào phù hợp
+                </td>
+              </tr>
+            ) : (
+              filtered.map((tx) => (
+                <tr
+                  key={tx.paymentId}
+                  className="border-t border-gray-300  hover:bg-blue-50 transition-colors duration-150"
                 >
-                  {tx.status}
-                </span>
-                <button className="text-blue-500 hover:underline flex items-center">
-                  View <CaretRight size={16} />
-                </button>
-              </div>
-            </li>
-          ))}
-        </ul>
-      )}
+                  <td className="px-4 py-3 whitespace-nowrap">
+                    <div className="font-medium text-gray-800">
+                      {new Date(tx.createdAt).toLocaleTimeString("vi-VN")}
+                    </div>
+                    <div className="text-xs text-gray-500">
+                      {new Date(tx.createdAt).toLocaleDateString("vi-VN")}
+                    </div>
+                  </td>
+                  <td className="px-4 py-3">{tx.paymentMethod || "—"}</td>
+                  <td className="px-4 py-3 text-right font-semibold text-gray-900">
+                    {tx.amount.toLocaleString("vi-VN", {
+                      style: "currency",
+                      currency: tx.currency || "VND",
+                    })}
+                  </td>
+                  <td className="px-4 py-3 truncate max-w-[130px]">{tx.transactionCode}</td>
+                  <td className="px-4 py-3 text-gray-600">{tx.description || "—"}</td>
+                  <td className="px-4 py-3 text-center">
+                    <span
+                      className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                        tx.status === "PAID"
+                          ? "bg-green-100 text-green-700 border border-green-300"
+                          : "bg-yellow-100 text-yellow-700 border border-yellow-300"
+                      }`}
+                    >
+                      {tx.status === "PAID" ? "Thành công" : "Đang chờ"}
+                    </span>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

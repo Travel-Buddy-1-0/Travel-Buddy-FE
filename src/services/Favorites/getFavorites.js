@@ -16,7 +16,7 @@
 
       // Lấy danh sách yêu thích
       const data = await res.json();
-console.log(data)
+
       // Đọc thông tin phân trang từ header
       const totalCount = res.headers.get("X-Total-Count");
       const pageNumber = res.headers.get("X-Page-Number");

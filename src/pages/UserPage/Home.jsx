@@ -134,10 +134,11 @@ if (storedQuery) {
             likedMap[String(fav.targetId)] = true;
           });
           setLikedItems(likedMap);
-          console.log("❤️ Loaded favorites:", likedMap);
+   
         }
       } catch (err) {
-        console.error("❌ Error loading favorites:", err);
+      
+        
       }
     };
     fetchFavorites();
@@ -153,7 +154,7 @@ if (storedQuery) {
     if (!isLiked && likeTimers.current[key]) {
       clearTimeout(likeTimers.current[key]);
       delete likeTimers.current[key];
-      console.log(`🛑 Cancel favorite for ${key}`);
+    
     }
 
     // Nếu like mới → tạo timer call API
@@ -161,13 +162,13 @@ if (storedQuery) {
       likeTimers.current[key] = setTimeout(async () => {
         try {
           await createFavoriteApi(userId, "POST", key);
-          console.log(`✅ Favorite saved for ${key}`);
+       
         } catch (err) {
-          console.error("❌ Error creating favorite:", err);
+
         } finally {
           delete likeTimers.current[key];
         }
-      }, 8000);
+      }, 4000);
     }
 
     return { ...prev, [key]: isLiked };
