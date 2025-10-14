@@ -2,7 +2,7 @@ export async function searchHotelsApi(payload, limit = 20, offset = 0) {
     
   try {
     const query = new URLSearchParams({ limit, offset }).toString();
-    console.log(payload)
+   
     const response = await fetch(`https://travel-buddy-web.azurewebsites.net/Hotel/search?${query}`, {
       method: "POST",
       headers: {

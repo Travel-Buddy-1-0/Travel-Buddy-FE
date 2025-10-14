@@ -150,14 +150,15 @@ const handleSubmit = (e) => {
         {/* Balance with plus button */}
         {user?.email && (
           <div className="flex items-center justify-between text-sm">
-       <span className="text-xs text-gray-500 font-semibold">
+    <span className="text-xs text-gray-500 font-semibold">
   {user?.walletBalance
     ? new Intl.NumberFormat("en-US", {
         style: "currency",
         currency: "USD",
-      }).format(user.walletBalance)
+      }).format(user.walletBalance / 26300)
     : "$0.00"}
 </span>
+
 
             <button
               className="p-1 rounded-full bg-white hover:bg-gray-200 transition cursor-pointer"

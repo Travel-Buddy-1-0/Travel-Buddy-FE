@@ -1,12 +1,9 @@
 import { useEffect, useState } from "react";
 import { X, PaperPlaneRight } from "phosphor-react";
 import { getUnsplashPhotoById } from "../../services/Unplash/unsplashByID";
+import { getComments } from "../../services/Comments/getComments";
+import { createComment } from "../../services/Comments/createComment";
 
-
-const initialComments = [
-  { id: 1, user: "Alice", avatar: "https://i.pravatar.cc/40?img=1", text: "Wow, đẹp quá!" },
-  { id: 2, user: "Bob", avatar: "https://i.pravatar.cc/40?img=2", text: "Mình muốn đi đó luôn." },
-];
 
 const hooks = [
   "Trải nghiệm địa điểm này, click vào đây!",
@@ -18,65 +15,84 @@ const hooks = [
 
 export default function PhotoDetail({ id, onClose }) {
   const [photo, setPhoto] = useState(null);
-  const [comments, setComments] = useState(initialComments);
+  const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
   const [randomHook, setRandomHook] = useState("");
-  const [loading, setLoading] = useState(true); // 👈 thêm trạng thái loading
-  const [error, setError] = useState(null); // 👈 thêm trạng thái lỗi
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const travelPackage = JSON.parse(sessionStorage.getItem("travelPackage") || "{}");
+          const user = JSON.parse(localStorage.getItem("user"));
+    if (!user?.userId) throw new Error("User not logged in");
+  const userId = user.userId; // Giả định user login (có thể lấy từ localStorage)
 
-  // chọn ngẫu nhiên câu "hook"
+  // chọn hook ngẫu nhiên
   useEffect(() => {
     setRandomHook(hooks[Math.floor(Math.random() * hooks.length)]);
   }, []);
 
-  // fetch ảnh theo ID
+  // Lấy ảnh
   useEffect(() => {
     const fetchPhoto = async () => {
-      setLoading(true);
-      setError(null);
-      const data = await getUnsplashPhotoById(id);
-      if (data) setPhoto(data);
-      else setError("Không tải được ảnh từ Unsplash");
-      setLoading(false);
+      try {
+        setLoading(true);
+        setError(null);
+        const data = await getUnsplashPhotoById(id);
+        if (data) setPhoto(data);
+        else throw new Error("Không tải được ảnh từ Unsplash");
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
     };
     fetchPhoto();
   }, [id]);
 
-  // thêm comment
-  const handleAddComment = () => {
-    if (newComment.trim() === "") return;
-    setComments(prev => [
-      ...prev,
-      { id: Date.now(), user: "You", avatar: "https://i.pravatar.cc/40?img=3", text: newComment.trim() },
-    ]);
-    setNewComment("");
+  // Lấy comment từ backend
+  useEffect(() => {
+    const fetchComments = async () => {
+      const data = await getComments(id);
+      setComments(data || []);
+    };
+    fetchComments();
+  }, [id]);
+
+
+  // Gửi comment mới
+  const handleAddComment = async () => {
+    if (!newComment.trim()) return;
+    try {
+      const newCmt = await createComment({
+        blogId: id,
+        userId,
+        content: newComment.trim(),
+        parentCommentId: null,
+      }
+    );
+      setComments((prev) => [...prev, newCmt]);
+      setNewComment("");
+    } catch (err) {
+      alert("Không thể gửi bình luận.");
+    }
   };
 
-  // chuyển hướng tới trang đặt phòng
-const handleBooking = () => {
-  // Lấy searchQuery từ localStorage
-  const storedQuery = localStorage.getItem("searchQuery")?.trim();
+  // Chuyển hướng đặt phòng
+  const handleBooking = () => {
+    const storedQuery = localStorage.getItem("searchQuery")?.trim();
+    const location = encodeURIComponent(storedQuery || travelPackage.destination || "New York");
+    const today = new Date();
+    const checkIn = today.toISOString().split("T")[0];
+    const checkoutDate = new Date(today);
+    checkoutDate.setDate(today.getDate() + 2);
+    const checkOut = checkoutDate.toISOString().split("T")[0];
+    const guests = encodeURIComponent("1 adult");
 
-  // Ưu tiên searchQuery, nếu không có thì dùng travelPackage.destination
-  const location = encodeURIComponent(storedQuery || travelPackage.destination || "New York");
+    const url = `https://travel-buddy-fe.vercel.app/booking/hotel?location=${location}&checkIn=${checkIn}&checkOut=${checkOut}&guests=${guests}`;
+    window.location.href = url;
+  };
 
-  const today = new Date();
-  const checkIn = today.toISOString().split("T")[0];
-
-  const checkoutDate = new Date(today);
-  checkoutDate.setDate(today.getDate() + 2);
-  const checkOut = checkoutDate.toISOString().split("T")[0];
-
-  const guests = encodeURIComponent("1 adult");
-
-  const url = `https://travel-buddy-fe.vercel.app/booking/hotel?location=${location}&checkIn=${checkIn}&checkOut=${checkOut}&guests=${guests}`;
-  window.location.href = url;
-};
-
-
-  // loading UI
+  // Loading UI
   if (loading) {
     return (
       <div className="fixed inset-0 flex items-center justify-center bg-black/80 text-white z-[1000]">
@@ -85,7 +101,7 @@ const handleBooking = () => {
     );
   }
 
-  // error UI
+  // Error UI
   if (error) {
     return (
       <div className="fixed inset-0 flex flex-col items-center justify-center bg-black/80 text-red-400 z-[1000]">
@@ -105,7 +121,7 @@ const handleBooking = () => {
   return (
     <div className="fixed inset-0 bg-black/90 backdrop-blur-sm flex items-center justify-center z-[1000] p-6 overflow-auto">
       <div className="relative bg-white rounded-lg shadow-lg w-4/5 flex flex-col md:flex-row overflow-hidden h-2/3 mx-auto">
-        {/* Close button */}
+        {/* Close */}
         <button
           onClick={onClose}
           className="absolute top-3 cursor-pointer right-3 p-2 rounded-full bg-gray-100 hover:bg-gray-200 z-10"
@@ -115,11 +131,7 @@ const handleBooking = () => {
 
         {/* Left: Photo */}
         <div className="flex-1 bg-black flex items-center justify-center">
-          <img
-            src={photo.src.large2x}
-            alt={photo.alt}
-            className="w-full h-full object-contain"
-          />
+          <img src={photo.src.large2x} alt={photo.alt} className="w-full h-full object-contain" />
         </div>
 
         {/* Right: Info */}
@@ -151,19 +163,15 @@ const handleBooking = () => {
 
             {/* Input comment */}
             <div className="flex items-center mb-3 space-x-2">
-              <img
-                src="https://i.pravatar.cc/40?img=3"
-                alt="You"
-                className="w-8 h-8 rounded-full"
-              />
+              <img src="https://i.pravatar.cc/40?img=3" alt="You" className="w-8 h-8 rounded-full" />
               <div className="relative flex-1 my-4">
                 <input
                   type="text"
                   placeholder="Add a comment..."
                   value={newComment}
-                  onChange={e => setNewComment(e.target.value)}
+                  onChange={(e) => setNewComment(e.target.value)}
                   className="w-full border rounded-full px-3 py-1.5 pr-10 text-sm focus:outline-none"
-                  onKeyDown={e => e.key === "Enter" && handleAddComment()}
+                  onKeyDown={(e) => e.key === "Enter" && handleAddComment()}
                 />
                 <button
                   onClick={handleAddComment}
@@ -175,20 +183,24 @@ const handleBooking = () => {
             </div>
 
             {/* Comments */}
-            <div className="space-y-3 max-h-48 overflow-y-auto">
-              {comments.map(c => (
-                <div key={c.id} className="flex items-start space-x-2">
-                  <img src={c.avatar} alt={c.user} className="w-6 h-6 rounded-full" />
+            <div className="space-y-3 max-h-48 overflow-y-auto items-center">
+              {comments.map((c, i) => (
+                <div key={i} className="flex items-start space-x-3">
+                  <img
+                    src={`https://i.pravatar.cc/40?u=${c.userId || i}`}
+                    alt="User"
+                    className="w-8 h-8 rounded-full "
+                  />
                   <div>
-                    <p className="font-semibold text-xs">{c.user}</p>
-                    <p className="text-gray-700 text-xs">{c.text}</p>
+                    <p className="font-semibold text-xs">{c.userName || `Anonymous user`}</p>
+                    <p className="text-gray-700 text-xs">{c.content}</p>
                   </div>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Booking section */}
+          {/* Booking */}
           <div className="mt-3 flex flex-col items-center relative">
             <p className="text-gray-600 text-sm mb-2 font-semibold text-center">{randomHook}</p>
 

@@ -20,7 +20,7 @@ export async function cancelBooking(bookingId) {
     }
 
     const result = await response.text();
-    console.log("✅ Hủy phòng thành công:", result);
+ 
     return result;
   } catch (error) {
     console.error("❌ Lỗi khi hủy phòng:", error);

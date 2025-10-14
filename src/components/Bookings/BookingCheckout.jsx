@@ -43,7 +43,7 @@ export default function BookingCheckout() {
   
       checkIn,
       checkOut,
-      totalPrice: totalPrice || 0,
+      totalPrice: totalPrice*26300 || 0,
       nights: nights || 1,
       guests: guests || 1,
       hotelId: hotelId || 0,
