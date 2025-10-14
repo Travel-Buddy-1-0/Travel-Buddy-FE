@@ -19,7 +19,7 @@ export async function getRoomDetail(roomId) {
     }
 
     const data = await response.json();
-    console.log("🏨 Room detail:", data);
+ 
 
     return data;
   } catch (error) {

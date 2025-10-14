@@ -1,8 +1,7 @@
 import { useMemo } from "react";
 
 export default function ReviewSection({ reviews }) {
-  // Tính điểm trung bình
-  console.log(reviews)
+  
   const avgRating = useMemo(() => {
     if (!reviews || reviews.length === 0) return 0;
     return (
