@@ -130,10 +130,10 @@ export default function MyCard() {
                   <td className="px-4 py-3 text-gray-600">{tx.description || "—"}</td>
                   <td className="px-4 py-3 text-center">
                     <span
-                      className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                      className={`  rounded-full text-xs font-semibold ${
                         tx.status === "PAID"
-                          ? "bg-green-100 text-green-700 border border-green-300"
-                          : "bg-yellow-100 text-yellow-700 border border-yellow-300"
+                          ? "  text-green-700 "
+                          : " text-yellow-700  "
                       }`}
                     >
                       {tx.status === "PAID" ? "Thành công" : "Đang chờ"}

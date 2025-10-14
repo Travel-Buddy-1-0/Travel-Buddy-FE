@@ -34,7 +34,7 @@ export const AccountMenu = ({ setUser }) => {
   };
 
   return (
-    <div className="flex bg-[#F9F9F9] space-x-3 w-5/6 mx-auto">
+    <div className="flex bg-[#F9F9F9] space-x-3  w-5/6 mx-auto">
       {/* Sidebar */}
       <div className="mt-4 w-1/4 p-4 bg-white rounded-lg m-4 h-fit shadow-lg border border-gray-200">
         {/* User info */}
@@ -120,7 +120,7 @@ export const AccountMenu = ({ setUser }) => {
       </div>
 
       {/* Main content */}
-      <div className="mt-4 w-3/4 p-4 m-4 h-fit">
+      <div className=" w-3/4 p-2 m-3 h-fit">
         <Outlet />
       </div>
     </div>

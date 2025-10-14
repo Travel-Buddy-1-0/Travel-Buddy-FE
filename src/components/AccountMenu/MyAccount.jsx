@@ -12,7 +12,7 @@ export default function MyAccount() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  const [notification, setNotification] = useState(null); // ✅ quản lý thông báo
+  const [notification, setNotification] = useState(null); 
 
   const [user, setUser] = useState({
     email: "",
