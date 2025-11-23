@@ -1,8 +1,9 @@
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 // services/Authen/resetPassword.js
 
 export async function resetPassword(email) {
   try {
-    const response = await fetch("https://travel-buddy-web.azurewebsites.net/Authentication/resetpassword", {
+    const response = await fetch(`${API_BASE_URL}/Authentication/resetpassword`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -25,3 +26,4 @@ export async function resetPassword(email) {
     throw err;
   }
 }
+

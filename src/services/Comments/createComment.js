@@ -1,8 +1,9 @@
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 export async function createComment( commentData) {
   try {
   
 
-    const response = await fetch(`https://localhost:7056/api/blogs/${commentData.blogId}/comments`, {
+    const response = await fetch(`${API_BASE_URL}/api/blogs/${commentData.blogId}/comments`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

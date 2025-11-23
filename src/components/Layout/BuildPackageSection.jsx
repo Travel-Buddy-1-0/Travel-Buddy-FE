@@ -122,24 +122,24 @@ export default function BuildPackageSection() {
 
 
   return (
-    <section className="flex justify-center py-4 cursor-pointer">
-      <div className="bg-white rounded-xl w-full max-w-lg p-6">
+    <section className="flex justify-center md:py-4 py-2 cursor-pointer">
+      <div className="bg-white rounded-xl w-full max-w-lg md:p-6 p-4">
         {!success ? (
           <>
-            <h2 className="text-xl font-bold text-center mb-6">
+            <h2 className="md:text-xl text-lg font-bold text-center md:mb-6 mb-4">
               Tự xây dựng gói du lịch
             </h2>
 
             {/* Destination Select */}
             <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block md:text-sm text-xs font-medium text-gray-700 mb-1">
                 Chọn Tỉnh/Thành phố
               </label>
-              <div className="flex items-center border rounded-md px-3 py-2 focus-within:ring-2 focus-within:ring-blue-400">
+              <div className="flex items-center border rounded-md md:px-3 md:py-2 px-2 py-2 focus-within:ring-2 focus-within:ring-blue-400">
                 <select
                   value={destination}
                   onChange={(e) => setDestination(e.target.value)}
-                  className="w-full outline-none text-gray-700 text-sm"
+                  className="w-full outline-none text-gray-700 md:text-sm text-xs"
                 >
                   <option value="">-- Chọn địa điểm --</option>
                   {provinces.map((p) => (
@@ -153,7 +153,7 @@ export default function BuildPackageSection() {
             </div>
 
             {/* Activities */}
-            <p className="text-gray-700 font-medium mb-3">
+            <p className="text-gray-700 font-medium md:text-base  text-sm mb-3">
               Sở thích hoạt động <span className="text-gray-400">(tối đa 5 mục)</span>
             </p>
             <div className="grid grid-cols-2 sm:grid-cols-2 gap-2 mb-6">
@@ -165,7 +165,7 @@ export default function BuildPackageSection() {
                 return (
                   <label
                     key={act.name}
-                    className={`flex items-center space-x-2 text-sm cursor-pointer ${
+                    className={`flex items-center space-x-2 md:text-sm text-xs cursor-pointer ${
                       isDisabled ? "opacity-50 cursor-not-allowed" : ""
                     }`}
                   >
@@ -194,7 +194,7 @@ export default function BuildPackageSection() {
             {/* Submit */}
             <button
               onClick={handleSubmit}
-              className="w-full py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md font-semibold transition"
+              className="w-full md:text-base text-sm py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md font-semibold transition"
             >
               Tạo gói du lịch
             </button>

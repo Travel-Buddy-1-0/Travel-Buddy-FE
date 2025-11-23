@@ -1,5 +1,5 @@
 // src/api/unsplashApi.js
-const UNSPLASH_KEY = "fxcJg7TtF1KfXyjpmHNGoI6IOHkpDlnJnpAdogfn7LU";
+const UNSPLASH_KEY = import.meta.env.VITE_UNSPLASH_API_KEY;
 
 /**
  * Lấy chi tiết ảnh theo ID từ Unsplash

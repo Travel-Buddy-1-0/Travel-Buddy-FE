@@ -30,7 +30,8 @@ const userId = user?.userId;
   }, [hotel.hotelId, userId]);
 
   // ✅ Hàm xử lý khi click tym
-  const handleFavoriteClick = async () => {
+  const handleFavoriteClick = async (e) => {
+    e.stopPropagation(); // Ngăn event navigate khi click vào card
     if (!userId) {
       alert("Vui lòng đăng nhập để thêm vào danh sách yêu thích!");
       return;
@@ -79,28 +80,26 @@ const userId = user?.userId;
       : 0;
 
   return (
-    <div className="border rounded-lg px-4 py-4 border-gray-300 flex gap-4 shadow-sm bg-white">
+    <div className="border rounded-lg p-4 border-gray-300 flex flex-col sm:flex-row gap-4 shadow-sm bg-white cursor-pointer" onClick={() => navigate(`/booking/hotel/${hotel.hotelId}`)}>
       {/* Ảnh */}
-      <div className="relative w-1/3">
+      <div className="relative w-full sm:w-1/3 h-48 sm:h-auto flex-shrink-0">
         <img
           src={image}
           alt={hotel.name}
           className="rounded-md w-full h-full object-cover"
         />
        <button
-  onClick={handleFavoriteClick}
-  disabled={loading}
-  className={`absolute top-2 right-2 p-2 rounded-full shadow transition cursor-pointer ${
-    isFavorite ? "bg-rose-500" : "bg-white hover:bg-gray-100"
-  }`}
->
-  <Heart
-    size={22}
-    weight={isFavorite ? "fill" : "regular"}
-    className={isFavorite ? "text-white" : "text-gray-600"}
-  />
-</button>
-
+          onClick={handleFavoriteClick}
+          disabled={loading}
+          className={`absolute top-2 right-2 p-2 rounded-full shadow transition z-10 ${
+            isFavorite ? "bg-rose-500 text-white" : "bg-white text-gray-600 hover:bg-gray-100"
+          }`}
+        >
+          <Heart
+            size={20}
+            weight={isFavorite ? "fill" : "regular"}
+          />
+        </button>
       </div>
 
       {/* Nội dung */}
@@ -113,42 +112,51 @@ const userId = user?.userId;
             </span>
           </h1>
 
-          <div className="text-sm text-blue-600 mt-3 flex items-center gap-2">
+          <div className="text-sm text-blue-600 mt-2 flex items-center gap-2">
             <span>{hotel.address}</span>
-            <button className="underline hover:text-blue-800">
+            <button className="underline hover:text-blue-800 hidden sm:block">
               Xem trên bản đồ
             </button>
           </div>
 
-          <div className="flex flex-wrap gap-2 my-4">
-            {amenities.map((tag, idx) => (
+          <div className="flex flex-wrap gap-2 my-3">
+            {amenities.slice(0, 5).map((tag, idx) => (
               <span
                 key={idx}
-                className="bg-blue-400 text-white text-xs font-medium px-2 py-1 rounded"
+                className="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded-full"
               >
                 {tag}
               </span>
             ))}
           </div>
 
-          <div className="mt-6">
-            {hotel.description && (
-              <p className="text-sm text-gray-600">{hotel.description}</p>
-            )}
-          </div>
+          {hotel.description && (
+            <p className="text-sm text-gray-600 line-clamp-2 sm:line-clamp-3">
+              {hotel.description}
+            </p>
+          )}
+        </div>
+        {/* Price section for mobile */}
+        <div className="sm:hidden mt-4 pt-4 border-t flex justify-between items-center">
+            <div className="text-lg font-bold text-red-600">US${usdPrice}</div>
+            <button
+                className="bg-blue-500 text-white px-4 py-2 font-semibold cursor-pointer rounded-md"
+            >
+                Xem chỗ trống
+            </button>
         </div>
       </div>
 
-      {/* Giá & đánh giá */}
-      <div className="flex flex-col justify-between text-right items-end">
+      {/* Giá & đánh giá (Desktop) */}
+      <div className="hidden sm:flex flex-col justify-between text-right items-end w-48 flex-shrink-0">
         <div>
-          <div className="flex items-center gap-2">
-            <span className="text-sm font-semibold">{hotel.reviewText}</span>
+          <div className="flex items-center gap-2 justify-end">
+            <span className="text-sm font-semibold text-right">{hotel.reviewText || "Good"}</span>
             <span className="bg-blue-900 text-white px-2 py-1 rounded font-bold">
               {(hotel.averageRating * 2).toFixed(1)}
             </span>
           </div>
-          <div className="text-sm text-gray-500">{hotel.reviews} đánh giá</div>
+          <div className="text-sm text-gray-500">{hotel.reviews || 0} đánh giá</div>
         </div>
         <div className="text-right">
           {hotel.oldPrice && (
@@ -158,10 +166,9 @@ const userId = user?.userId;
           )}
           <div className="text-xl font-bold text-red-600">US${usdPrice}</div>
 
-          <div className="text-xs text-gray-500">Đã bao gồm thuế và phí</div>
+          <div className="text-xs text-gray-500 mb-1">Đã bao gồm thuế và phí</div>
           <button
-            onClick={() => navigate(`/booking/hotel/${hotel.hotelId}`)}
-            className="bg-blue-500 text-white px-4 py-2 font-semibold cursor-pointer rounded-md mt-2"
+            className="bg-blue-500 text-white px-4 py-2 font-semibold cursor-pointer rounded-md w-full"
           >
             Xem chỗ trống
           </button>

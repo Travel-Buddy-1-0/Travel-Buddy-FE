@@ -1,3 +1,4 @@
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export async function cancelBooking(bookingId) {
   try {
@@ -5,7 +6,7 @@ export async function cancelBooking(bookingId) {
 
     // status = 0 => hủy phòng
     const response = await fetch(
-      `https://travel-buddy-web.azurewebsites.net/Hotel/change-status-booking?bookingId=${bookingId}`,
+      `${API_BASE_URL}/Hotel/change-status-booking?bookingId=${bookingId}`,
       {
         method: "GET",
         headers: {

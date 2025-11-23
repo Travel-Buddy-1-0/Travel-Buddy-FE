@@ -1,3 +1,4 @@
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export async function  updatePassword(newPassword) {
   try {
@@ -9,7 +10,7 @@ export async function  updatePassword(newPassword) {
     }
     console.log("");
 
-    const response = await fetch("https://travel-buddy-web.azurewebsites.net/Authentication/updatepassword", {
+    const response = await fetch(`${API_BASE_URL}/Authentication/updatepassword`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -33,3 +34,5 @@ export async function  updatePassword(newPassword) {
     throw error;
   }
 };
+
+

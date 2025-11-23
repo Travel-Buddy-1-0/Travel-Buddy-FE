@@ -1,3 +1,4 @@
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   export async  function getFavorites(userId, targetType) {
     const params = new URLSearchParams({
       UserId: userId,
@@ -5,7 +6,7 @@
     });
 
     try {
-      const res = await fetch(`https://travel-buddy-web.azurewebsites.net/api/Favorite?${params.toString()}`, {
+      const res = await fetch(`${API_BASE_URL}/api/Favorite?${params.toString()}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",

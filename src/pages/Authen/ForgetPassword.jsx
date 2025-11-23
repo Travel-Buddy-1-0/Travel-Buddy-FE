@@ -23,7 +23,7 @@ export default function ForgetPassword() {
   };
 
   return (
-    <div className="w-full max-w-sm">
+    <div className="w-full max-w-sm my-14">
       {/* Heading */}
       <div className="mb-10">
         <h2 className="text-xl font-bold text-gray-900">Forgot Password</h2>

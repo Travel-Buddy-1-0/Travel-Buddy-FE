@@ -1,5 +1,5 @@
 // src/api/unsplashApi.js
-const UNSPLASH_KEY = "fxcJg7TtF1KfXyjpmHNGoI6IOHkpDlnJnpAdogfn7LU";
+const UNSPLASH_KEY = import.meta.env.VITE_UNSPLASH_API_KEY;
 const PER_PAGE = 12;
 
 /**

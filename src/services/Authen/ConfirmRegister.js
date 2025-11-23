@@ -1,3 +1,4 @@
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 export async function confirmRegisterApi(payload) {
   try {
     const body = {
@@ -11,7 +12,7 @@ export async function confirmRegisterApi(payload) {
 
 
 
-    const response = await fetch("https://travel-buddy-web.azurewebsites.net/Authentication/confirmRegister", {
+    const response = await fetch(`${API_BASE_URL}/Authentication/confirmRegister`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
@@ -25,3 +26,4 @@ export async function confirmRegisterApi(payload) {
     throw err;
   }
 }
+

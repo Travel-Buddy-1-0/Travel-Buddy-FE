@@ -1,8 +1,9 @@
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 // src/services/Authen/googleSession.js
 export async function createGoogleSession  (accessToken, refreshToken)  {
   try {
     console.log("Creating Google session with tokens:", { accessToken, refreshToken });
-    const response = await fetch("https://travel-buddy-web.azurewebsites.net/Authentication/google-session", {
+    const response = await fetch(`${API_BASE_URL}/Authentication/google-session`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -28,3 +29,4 @@ export async function createGoogleSession  (accessToken, refreshToken)  {
     throw err;
   }
 };
+

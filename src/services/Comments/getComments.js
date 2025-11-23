@@ -1,8 +1,9 @@
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export async function getComments(blogId) {
   try {
     
-    const response = await fetch(`https://localhost:7056/api/blogs/${blogId}/comments`, {
+    const response = await fetch(`${API_BASE_URL}/api/blogs/${blogId}/comments`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

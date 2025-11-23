@@ -1,9 +1,10 @@
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 export async function getUserApi() {
   try {
     const accessToken = localStorage.getItem("accessToken");
     if (!accessToken) throw new Error("Access token not found, please login.");
 
-    const response = await fetch("https://travel-buddy-web.azurewebsites.net/Authentication/getUser", {
+    const response = await fetch(`${API_BASE_URL}/Authentication/getUser`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -28,3 +29,4 @@ export async function getUserApi() {
     throw error;
   }
 }
+

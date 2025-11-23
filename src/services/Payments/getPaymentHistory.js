@@ -1,8 +1,9 @@
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 export async function  getPaymentHistory() {
   try {
         const user = JSON.parse(localStorage.getItem("user"));
     if (!user?.userId) throw new Error("User not logged in");
-    const response = await fetch(`https://travel-buddy-web.azurewebsites.net/api/Payment/history/${user.userId}`, {
+    const response = await fetch(`${API_BASE_URL}/api/Payment/history/${user.userId}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

@@ -104,15 +104,15 @@ export default function BookingHotel() {
         </div>
 
         {/* Search Filters */}
-        <div className="border rounded-sm border-gray-200 py-2 px-4 flex items-center justify-between bg-white shadow-sm max-w-8xl mx-6 mb-3 text-sm space-x-3">
+        <div className="border rounded-lg border-gray-200 p-2 md:p-4 flex flex-col md:flex-row items-stretch md:items-center justify-between bg-white shadow-sm max-w-8xl mx-2 sm:mx-6 mb-3 text-sm">
           {/* Location */}
-          <div className="flex flex-col flex-1 pr-4 border-r border-gray-200">
+          <div className="flex flex-col flex-1 p-2 md:pr-4 md:border-r border-b md:border-b-0 border-gray-200">
             <label className="text-gray-500 text-xs">Location</label>
             <div className="flex items-center space-x-1">
               <MapPin size={16} weight="fill" className="text-gray-400" />
               <select
                 id="location"
-                className="bg-transparent outline-none text-sm w-full"
+                className="bg-transparent outline-none text-sm w-full font-semibold"
                 value={searchData.location}
                 onChange={(e) =>
                   setSearchData({ ...searchData, location: e.target.value })
@@ -129,14 +129,14 @@ export default function BookingHotel() {
           </div>
 
           {/* Check In */}
-          <div className="flex flex-col flex-1 pr-4 border-r border-gray-200">
+          <div className="flex flex-col flex-1 p-2 md:pr-4 md:border-r border-b md:border-b-0 border-gray-200">
             <label className="text-gray-500 text-xs">Check In</label>
             <div className="flex items-center space-x-1">
               <Calendar size={16} className="text-gray-400" />
               <input
                 id="checkIn"
                 type="date"
-                className="bg-transparent outline-none text-sm w-full"
+                className="bg-transparent outline-none text-sm w-full font-semibold"
                 value={searchData.checkIn || today}
                 min={today}
                 onChange={(e) =>
@@ -147,14 +147,14 @@ export default function BookingHotel() {
           </div>
 
           {/* Check Out */}
-          <div className="flex flex-col flex-1 pr-4 border-r border-gray-200">
+          <div className="flex flex-col flex-1 p-2 md:pr-4 md:border-r border-b md:border-b-0 border-gray-200">
             <label className="text-gray-500 text-xs">Check Out</label>
             <div className="flex items-center space-x-1">
               <Calendar size={16} className="text-gray-400" />
               <input
                 id="checkOut"
                 type="date"
-                className="bg-transparent outline-none text-sm w-full"
+                className="bg-transparent outline-none text-sm w-full font-semibold"
                 value={searchData.checkOut || tomorrow}
                 min={searchData.checkIn || today}
                 onChange={(e) =>
@@ -165,13 +165,13 @@ export default function BookingHotel() {
           </div>
 
           {/* Guests */}
-          <div className="flex flex-col flex-1 pr-4">
+          <div className="flex flex-col flex-1 p-2 md:pr-4">
             <label className="text-gray-500 text-xs">Guest</label>
             <div className="flex items-center space-x-1">
               <Users size={16} className="text-gray-400" />
               <select
                 id="guests"
-                className="bg-transparent outline-none text-sm w-full"
+                className="bg-transparent outline-none text-sm w-full font-semibold"
                 value={searchData.guests}
                 onChange={(e) =>
                   setSearchData({ ...searchData, guests: e.target.value })
@@ -187,10 +187,10 @@ export default function BookingHotel() {
           {/* Search Button */}
           <button
             onClick={handleSearch}
-            className="bg-blue-400 cursor-pointer text-white rounded-full px-4 py-2 flex items-center space-x-1 hover:bg-blue-500 text-sm ml-4"
+            className="bg-blue-500 cursor-pointer text-white rounded-lg px-4 py-3 flex items-center justify-center space-x-2 hover:bg-blue-600 text-sm mt-2 md:mt-0 md:ml-4"
           >
             <MagnifyingGlass size={16} weight="bold" />
-            <span>Search</span>
+            <span className="font-semibold">Search</span>
           </button>
         </div>
       </div>

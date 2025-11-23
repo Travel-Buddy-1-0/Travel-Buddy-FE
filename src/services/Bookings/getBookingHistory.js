@@ -1,3 +1,4 @@
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 export async function getBookingHistory(limit = 20, offset = 0) {
   try {
     // 🔹 Lấy userId từ localStorage
@@ -10,7 +11,7 @@ export async function getBookingHistory(limit = 20, offset = 0) {
  
     // 🔹 Gọi API
     const response = await fetch(
-      `https://travel-buddy-web.azurewebsites.net/Hotel/bookings/history?userId=${userId}&limit=${limit}&offset=${offset}`,
+      `${API_BASE_URL}/Hotel/bookings/history?userId=${userId}&limit=${limit}&offset=${offset}`,
       {
         method: "GET",
         headers: {

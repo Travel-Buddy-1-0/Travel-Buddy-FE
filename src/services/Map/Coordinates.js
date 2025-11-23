@@ -1,7 +1,7 @@
 export async function getCoordinates(address) {
   if (!address) return null;
 
-  const API_KEY = "8cc573fcb2bd475487f7f89e4334a110"; // Thay bằng API key của bạn
+  const API_KEY = import.meta.env.VITE_GEOAPIFY_API_KEY;
   const encodedAddress = encodeURIComponent(address);
 
   try {

@@ -1,3 +1,4 @@
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 export async function updateUserProfile(profileData) {
   try {
     const accessToken = localStorage.getItem("accessToken");
@@ -8,15 +9,15 @@ export async function updateUserProfile(profileData) {
     }
 
     // Chuẩn hóa dữ liệu profile (tránh undefined/null)
-const sanitizedProfile = {
-  username: profileData.username || null,
-  email: profileData.email || null,
-  fullName: profileData.fullName || null,
-  phoneNumber: profileData.phoneNumber || null,
-  image: profileData.image || null,
-  dateOfBirth: profileData.dateOfBirth || null, // YYYY-MM-DD
-  sex: profileData.sex || null,
-};
+    const sanitizedProfile = {
+      username: profileData.username || null,
+      email: profileData.email || null,
+      fullName: profileData.fullName || null,
+      phoneNumber: profileData.phoneNumber || null,
+      image: profileData.image || null,
+      dateOfBirth: profileData.dateOfBirth || null, // YYYY-MM-DD
+      sex: profileData.sex || null,
+    };
 
     const payload = {
       auth: {
@@ -27,7 +28,7 @@ const sanitizedProfile = {
     };
 
     const response = await fetch(
-      "https://travel-buddy-web.azurewebsites.net/user/updateInformation",
+      `${API_BASE_URL}/user/updateInformation`,
       {
         method: "PUT",
         headers: {

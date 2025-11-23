@@ -49,7 +49,7 @@ export default function Login() {
   };
 
   return (
-    <div className="w-full max-w-sm">
+    <div className="w-full max-w-sm my-14">
       {/* Heading */}
       <div>
         <h2 className="text-xl font-bold text-gray-900">Login to your account</h2>

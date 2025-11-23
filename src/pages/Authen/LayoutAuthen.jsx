@@ -13,14 +13,15 @@ export default function LayoutAuthen() {
       {/* Lớp phủ làm mờ ảnh nền */}
       <div className="absolute inset-0 backdrop-blur-sm"></div>
 
-      {/* Nội dung header */}
-      <header className="relative z-10 text-white flex justify-between items-center px-2 py-1 rounded-b-xl">
-        <div>
-          <img src={LogoWhite} alt="Logo" className="h-18" />
+      {/* Header */}
+      <header className="relative z-10 text-white flex flex-wrap justify-between items-center px-4 py-3 rounded-b-xl">
+        {/* Logo */}
+        <div className="flex items-center mb-2 sm:mb-0">
+          <img src={LogoWhite} alt="Logo" className="h-14 sm:h-16 md:h-18" />
         </div>
 
         {/* Menu */}
-        <div className="space-x-4 flex">
+        <div className="hidden md:flex space-x-4">
           <Link
             to="/register"
             className="bg-none px-3 py-1 rounded-full hover:bg-blue-400 hover:text-black flex items-center text-sm"
@@ -39,17 +40,17 @@ export default function LayoutAuthen() {
 
           <Link
             to="/"
-            className="bg-none px-3 py-1 rounded-full hover:bg-blue-400 hover:text-black flex items-center text-sm"
+            className="bg-none px-3 py-1 rounded-full hover:bg-blue-400 hover:text-black text-sm"
           >
-            <div className="text-base">Travel local</div>
+            Travel local
           </Link>
         </div>
 
         {/* Auth buttons */}
-        <div className="flex mr-4 space-x-2">
+        <div className="flex space-x-2">
           <Link
             to="/login"
-            className="text-sm px-3 py-1 rounded-full hover:bg-blue-400 hover:text-black"
+            className="text-sm px-3 py-1 rounded-full hover:bg-blue-400 hover:text-black border border-transparent"
           >
             Login in
           </Link>
@@ -64,33 +65,45 @@ export default function LayoutAuthen() {
       </header>
 
       {/* Content */}
-      <div className="relative z-10 flex items-center justify-center">
-        {/* Left: Outlet thay cho form */}
-        <div className="md:w-2/5   flex items-center justify-center bg-white rounded-xl shadow-lg py-20  ">
+      <div className="relative z-10 flex flex-col md:flex-row items-center justify-center px-4 py-10 md:py-20">
+        {/* Left: Outlet form */}
+        <div className="w-full md:w-2/5 flex items-center justify-center bg-white rounded-xl shadow-lg p-6 sm:p-10 md:py-20">
           <Outlet />
         </div>
 
-        {/* Right: images with floating animation */}
-        <div className="hidden md:block w-2/5 relative min-h-[800px]">
-          {/* London */}
+        {/* Right: images */}
+        <div className="hidden md:block w-2/5 relative min-h-[700px]">
           <img
             src="https://mindtrip.ai/cdn-cgi/image/format=webp,w=640/https://images.mindtrip.ai/web/London.png"
-            className="absolute left-[100px] top-20 w-60 drop-shadow-xl animate-london transition-transform duration-500 hover:scale-105"
+            className="absolute left-[80px] top-20 w-48 md:w-60 drop-shadow-xl animate-london transition-transform duration-500 hover:scale-105"
             alt="London"
           />
-          {/* Paris */}
           <img
             src={Anh2}
-            className="absolute right-[-100px] top-5 w-50 drop-shadow-xl animate-paris transition-transform duration-500 hover:scale-110"
+            className="absolute right-[-80px] top-5 w-40 md:w-56 drop-shadow-xl animate-paris transition-transform duration-500 hover:scale-110"
             alt="Paris"
           />
-          {/* Rome */}
           <img
             src={Anh1}
-            className="absolute right-[10px] bottom-[100px] w-80 drop-shadow-xl animate-rome transition-transform duration-500 hover:scale-105"
+            className="absolute right-[10px] bottom-[80px] w-64 md:w-80 drop-shadow-xl animate-rome transition-transform duration-500 hover:scale-105"
             alt="Rome"
           />
         </div>
+      </div>
+
+      {/* Mobile menu (ẩn trên desktop) */}
+      <div className="flex md:hidden justify-center space-x-3 text-white mt-4 pb-4">
+        <Link to="/register" className="text-sm hover:text-blue-300">
+          Traveler
+        </Link>
+        <span>|</span>
+        <Link to="/ErrorPage" className="text-sm hover:text-blue-300">
+          Business
+        </Link>
+        <span>|</span>
+        <Link to="/" className="text-sm hover:text-blue-300">
+          Travel local
+        </Link>
       </div>
     </div>
   );

@@ -1,7 +1,8 @@
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 // authService.js
 export async function registerTraveler(email, password) {
   try {
-    const response = await fetch("https://travel-buddy-web.azurewebsites.net/Authentication/register", {
+    const response = await fetch(`${API_BASE_URL}/Authentication/register`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -20,3 +21,5 @@ export async function registerTraveler(email, password) {
     throw err;
   }
 }
+
+

@@ -1,10 +1,11 @@
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 export async function createFavoriteApi(userId, targetType, targetId) {
   try {
     console.log(userId+targetType+targetId)
     const accessToken = localStorage.getItem("accessToken");
     if (!accessToken) throw new Error("Access token not found, please login.");
 
-    const response = await fetch("https://travel-buddy-web.azurewebsites.net/api/Favorite", {
+    const response = await fetch(`${API_BASE_URL}/api/Favorite`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

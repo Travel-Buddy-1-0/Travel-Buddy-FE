@@ -1,13 +1,14 @@
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 export async function bookingHotel(bookingData) {
   try {
     // Lấy userId từ localStorage
     const user = JSON.parse(localStorage.getItem("user"));
    
-    console.log(bookingData)
+ 
     const userId = user.userId;
-
+    console.log("Booking data being sent:", bookingData);
     // Gọi API
-    const response = await fetch(`https://travel-buddy-web.azurewebsites.net/Hotel/book?userId=${userId}`, {
+    const response = await fetch(`${API_BASE_URL}/Hotel/book?userId=${userId}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -20,7 +21,7 @@ export async function bookingHotel(bookingData) {
     }
 
     const data = await response.json();
-    console.log("Booking successful:", data);
+
 
     // Nếu muốn lưu lại booking info
     localStorage.setItem("booking", JSON.stringify(data));

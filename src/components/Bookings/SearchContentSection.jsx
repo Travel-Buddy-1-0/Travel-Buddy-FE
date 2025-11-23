@@ -5,7 +5,7 @@ import "rc-slider/assets/index.css";
 import SidebarFilter from "../../components/Bookings/SilderBarfilterSearch";
 import HotelCard from "./HotelCard";
 import { searchHotelsApi } from "../../services/Bookings/searchHotelsApi";
-
+import { Funnel } from "phosphor-react";
 
 export default function SearchContentSection() {
   const [min, setMin] = useState(2400);
@@ -13,6 +13,7 @@ export default function SearchContentSection() {
   const [filters, setFilters] = useState([]);
   const [hotels, setHotels] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showFilters, setShowFilters] = useState(false);
 
   const [searchParams] = useSearchParams();
 
@@ -41,9 +42,8 @@ export default function SearchContentSection() {
     setLoading(true);
     try {
       const payload = buildPayload();
-      const data = await searchHotelsApi(payload); 
+      const data = await searchHotelsApi(payload);
       setHotels(data);
-     
     } catch (err) {
       console.error("Lỗi load hotels:", err);
       setHotels([]);
@@ -62,10 +62,21 @@ export default function SearchContentSection() {
   };
 
   return (
-    <div className="container w-5/6 mx-auto flex gap-6">
+    <div className="container w-full mx-auto flex flex-col lg:flex-row gap-6 px-4 md:px-6">
+      {/* Mobile Filter Button */}
+      <div className="lg:hidden mb-4">
+        <button
+          onClick={() => setShowFilters(!showFilters)}
+          className="w-full flex items-center justify-center gap-2 p-3 bg-white border border-gray-300 rounded-lg shadow-sm"
+        >
+          <Funnel size={20} />
+          <span className="font-semibold">{showFilters ? "Hide" : "Show"} Filters</span>
+        </button>
+      </div>
+
       {/* Sidebar */}
-      <div className="w-1/4 space-y-4">
-        <div className="p-4 border-gray-400 rounded-xl shadow-sm bg-white">
+      <div className={`${showFilters ? "block" : "hidden"} lg:block w-full lg:w-1/4 space-y-4`}>
+        <div className="p-4 border border-gray-300 rounded-xl shadow-sm bg-white">
           <h3 className="text-base font-bold mb-2">Price Range</h3>
           <div className="values text-blue-600 font-semibold mb-1">
             ${min.toLocaleString()} - ${max.toLocaleString()}
@@ -83,9 +94,9 @@ export default function SearchContentSection() {
       </div>
 
       {/* Content */}
-      <div className="w-3/4 space-y-6">
-        {loading && <p>Đang tải...</p>}
-        {!loading && hotels.length === 0 && <p>Không tìm thấy khách sạn.</p>}
+      <div className="w-full lg:w-3/4 space-y-6">
+        {loading && <p className="text-center">Đang tải...</p>}
+        {!loading && hotels.length === 0 && <p className="text-center">Không tìm thấy khách sạn phù hợp.</p>}
         {!loading && hotels.length > 0 && (
           <div className="space-y-4">
             {hotels.map((hotel) => (

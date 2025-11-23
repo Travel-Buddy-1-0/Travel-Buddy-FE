@@ -1,3 +1,4 @@
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 export async function getReviewsApi(hotelId, rating = null, limit = 20, offset = 0) {
   try {
     if (!hotelId) throw new Error("Missing hotelId");
@@ -12,7 +13,7 @@ export async function getReviewsApi(hotelId, rating = null, limit = 20, offset =
     if (rating !== null) params.append("rating", rating);
 
     const response = await fetch(
-      `https://travel-buddy-web.azurewebsites.net/Hotel/reviews?${params.toString()}`, 
+      `${API_BASE_URL}/Hotel/reviews?${params.toString()}`, 
       {
         method: "GET",
         headers: {

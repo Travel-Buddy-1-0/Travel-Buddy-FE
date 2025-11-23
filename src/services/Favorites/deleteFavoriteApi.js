@@ -1,8 +1,9 @@
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 export async function deleteFavoriteApi(favoriteId) {
   if (!favoriteId) throw new Error("Favorite ID is required");
 
   try {
-    const res = await fetch(`https://travel-buddy-web.azurewebsites.net/api/Favorite/${favoriteId}`, {
+    const res = await fetch(`${API_BASE_URL}/api/Favorite/${favoriteId}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",

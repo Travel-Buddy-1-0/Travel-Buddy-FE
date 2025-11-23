@@ -59,7 +59,7 @@ export default function TravelerRegister() {
   };
 
   return (
-    <div className="w-full max-w-sm mx-auto">
+    <div className="w-full max-w-sm mx-auto my-14">
       {/* Heading */}
       <div>
         <h2 className="text-xl font-bold text-gray-900 text-center">

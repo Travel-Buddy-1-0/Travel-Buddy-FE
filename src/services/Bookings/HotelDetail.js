@@ -1,9 +1,10 @@
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 export async function getHotelDetailApi(id) {
   try {
     if (!id) throw new Error("Hotel ID is required");
 
     const response = await fetch(
-      `https://travel-buddy-web.azurewebsites.net/Hotel/${id}`,
+      `${API_BASE_URL}/Hotel/${id}`,
       {
         method: "GET",
         headers: {

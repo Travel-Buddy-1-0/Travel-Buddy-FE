@@ -44,49 +44,50 @@ export default function HotelGallery({ images }) {
 
   return (
     <div className="my-6">
-      <div className="grid grid-cols-5 grid-rows-2 gap-2 rounded-lg overflow-hidden relative">
-        {/* Ảnh to bên trái */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 h-64 sm:h-80 md:h-96 rounded-lg overflow-hidden relative">
+        {/* Main Image */}
         <div
-          className="row-span-2 col-span-2 relative cursor-pointer"
+          className="col-span-2 row-span-2 relative cursor-pointer group"
           onClick={() => openModal(0)}
         >
           <img
             src={galleryImages[0]}
             alt="main"
-            className="w-full h-full object-cover rounded-lg"
+            className="w-full h-full object-cover"
           />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent group-hover:from-black/80 transition"></div>
           <button
             onClick={(e) => {
               e.stopPropagation();
               openModal(0);
             }}
-            className="absolute bottom-3 left-3 bg-white/90 text-blue-600 text-sm px-3 py-2 rounded-full flex items-center gap-2 shadow hover:bg-white"
+            className="absolute bottom-4 left-4 bg-white/90 text-gray-800 text-sm px-4 py-2 rounded-lg flex items-center gap-2 shadow-lg hover:bg-white"
           >
-            <i className="fa-regular fa-image"></i> Xem mọi bức ảnh
+            Xem mọi bức ảnh
           </button>
         </div>
 
         {/* Wishlist */}
         <button
           onClick={(e) => e.stopPropagation()}
-          className="absolute top-3 right-3 bg-white rounded-full p-2 shadow hover:scale-105"
+          className="absolute top-3 right-3 bg-white/90 rounded-full p-2 shadow hover:scale-105 transition"
         >
-          <i className="fa-regular fa-heart text-gray-600"></i>
+          <i className="fa-regular fa-heart text-gray-800"></i>
         </button>
 
-        {/* Các ảnh nhỏ bên phải */}
-        {galleryImages.slice(1, 7).map((img, idx) => (
-          <div
-            key={idx}
-            className="relative cursor-pointer"
-            onClick={() => openModal(idx + 1)}
-          >
-            <img
-              src={img}
-              alt={`thumb-${idx}`}
-              className="w-full h-full object-cover rounded-lg"
-            />
-          </div>
+        {/* Other Images (visible on md and up) */}
+        {galleryImages.slice(1, 3).map((img, idx) => (
+            <div
+                key={idx}
+                className="hidden sm:block relative cursor-pointer"
+                onClick={() => openModal(idx + 1)}
+            >
+                <img
+                src={img}
+                alt={`thumb-${idx}`}
+                className="w-full h-full object-cover"
+                />
+            </div>
         ))}
       </div>
 

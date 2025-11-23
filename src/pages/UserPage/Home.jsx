@@ -180,25 +180,27 @@ if (storedQuery) {
     <div className="px-4 py-6 relative">
       {/* Filter Buttons */}
       {activityTopics.length > 0 && (
-        <div className="fixed bottom-0 left-0 right-0 w-full flex justify-center space-x-4 mb-6 z-50">
-          {activityTopics.map((topic, idx) => {
-            const Icon = topic.icon;
-            const isActive = query === topic.query;
-            return (
-              <button
-                key={idx}
-                onClick={() => setQuery(topic.query)}
-                title={topic.name}
-                className={`p-3 rounded-full transition shadow-md cursor-pointer ${
-                  isActive
-                    ? "bg-blue-500 text-white scale-110"
-                    : "bg-black text-white hover:bg-gray-800"
-                }`}
-              >
-                <Icon size={18} />
-              </button>
-            );
-          })}
+        <div className="fixed bottom-0 left-0 right-0 w-full flex justify-center mb-6 z-40 px-4">
+          <div className="flex space-x-2 p-2 bg-gray-900/70 rounded-full backdrop-blur-sm overflow-x-auto">
+            {activityTopics.map((topic, idx) => {
+              const Icon = topic.icon;
+              const isActive = query === topic.query;
+              return (
+                <button
+                  key={idx}
+                  onClick={() => setQuery(topic.query)}
+                  title={topic.name}
+                  className={`flex-shrink-0 p-3 rounded-full transition shadow-md cursor-pointer ${
+                    isActive
+                      ? "bg-blue-500 text-white scale-110"
+                      : "bg-black text-white hover:bg-gray-700"
+                  }`}
+                >
+                  <Icon size={18} />
+                </button>
+              );
+            })}
+          </div>
         </div>
       )}
 

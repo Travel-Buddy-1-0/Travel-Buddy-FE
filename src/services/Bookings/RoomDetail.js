@@ -1,10 +1,11 @@
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 export async function getRoomDetail(roomId) {
   try {
     if (!roomId) {
       throw new Error("roomId is required");
     }
 
-    const response = await fetch(`https://travel-buddy-web.azurewebsites.net/api/Room/${roomId}`, {
+    const response = await fetch(`${API_BASE_URL}/api/Room/${roomId}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -19,7 +20,7 @@ export async function getRoomDetail(roomId) {
     }
 
     const data = await response.json();
- 
+
 
     return data;
   } catch (error) {
